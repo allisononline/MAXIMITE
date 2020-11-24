@@ -1,0 +1,9 @@
+SUB COPYMEM(x1,y1,x2,y2)
+    STARTBYTE = (INT(x1/8)+1)*y1
+    DIM VIDEO(INT(x2/8)-INT(x1/8),y2-y1)
+    FOR j = y1 to y2
+        FOR i = INT(x1/8) to INT(x2/8)
+            VIDEO(i,j) = PEEK(RVIDEO,i*j)
+        NEXT
+    NEXT
+    

@@ -1,0 +1,20 @@
+CLS
+X = MM.HRES / 8
+Y = MM.VRES / 8 * 7
+C = 0
+X1 = X
+Y1 = Y
+X2 = X1 - X
+Y2 = 0
+DO WHILE INKEY$ = ""
+TONE 1000, 1000
+DO WHILE C < 8
+LINE (X1, Y1) - (X2, Y2), C, BF
+X1 = X1 + X
+X2 = X2 + X
+C = C + 1
+LOOP
+PRINT @(MM.HRES - 12, 0, 2) "24"
+LINE (MM.HRES / 2, Y) - (MM.HRES, MM.VRES), 8, BF
+LOOP
+CLS

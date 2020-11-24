@@ -1,0 +1,290 @@
+
+'cats'
+FUNCTION TYPECAST(BYTES$)
+       FOR J = 0 TO 3
+              POKE VAR TYPECAST,J,PEEK(VAR BYTES$,J+1)
+       NEXT
+END FUNCTION
+
+FUNCTION TYPECAST$(INTEGER)
+        TYPECAST$ = "    "
+        FOR J = 0 TO 3
+                 POKE VAR TYPECAST$,J+1,PEEK(VAR INTEGER,J)
+        NEXT
+END FUNCTION
+
+SUB LINEREAD(INLINE$,a$,b$,c$,d$)
+       v = 1
+       g = 1
+       DO WHILE v < LEN(INLINE$)
+            FOR i = 0 TO 3
+                IF MID$(INLINE$,v,1) = "/" OR MID$(INLINE$,v,1) = " " THEN
+                    IF i = 0 THEN
+                        a$ = MID$(INLINE$,g,v-g)
+                    ELSEIF i = 1 THEN
+                        b$ = MID$(INLINE$,g,v-g)
+                    ELSEIF i = 2 THEN
+                        c$ = MID$(INLINE$,g,v-g)
+                    ELSEIF i = 3 THEN
+                        d$ = MID$(INLINE$,g,v-g)
+                    ENDIF
+                    IF MID$(INLINE$,v,1) = "/" THEN            
+                        DO WHILE MID$(INLINE$,v,1) <> " " AND MID$(INLINE$,v,1) <> ""
+                            v = v + 1
+                            g = g + 1
+                        LOOP
+                    ENDIF
+                    IF MID$(INLINE$,v,1) = " " THEN
+                        DO WHILE MID$(INLINE$,v,1) = " "
+                            v = v + 1
+                            g = g + 1
+                        LOOP
+                    ENDIF
+                ENDIF
+                v = v + 1
+            NEXT
+       LOOP
+END SUB
+
+SUB BINFORMAT
+    HEADER = 32
+    POINTS = 0
+       LINES = -1
+    Input "ENTER .OBJ FILE: ",FILENAME$
+    Open FILENAME$ For INPUT As #3
+    OUTPUT$ = LEFT$(FILENAME$,LEN(FILENAME$)-4)+".BIN"
+    DO 
+        Line Input #3,LINES$
+            LINEREAD(LINES$,t$,x$,y$,z$)
+            IF t$ = "v" THEN
+                   PLUS(POINTS)
+            ENDIF
+            IF t$ = "f" OR t$ = "l" THEN
+                IF z$ <> "" THEN
+                    PLUS(LINES)
+                    PLUS(LINES)
+                    ELSE
+                        PLUS(LINES)
+                    ENDIF
+            ENDIF
+            PRINT t$; x$ ;y$ ;z$
+    LOOP UNTIL EOF(#3) <> 0
+    PRINT POINTS
+       PRINT LINES
+    CLOSE #3
+END SUB
+
+SUB COMPRESS
+    j = 0
+    i = 0
+    HEADER = 32
+    POINTS = 0
+    Input "ENTER .OBJ FILE: ",FILENAME$
+    Open FILENAME$ For INPUT As #3
+'    OUTPUT$ = LEFT$(FILENAME$,LEN(FILENAME$)-4)+".BIN"
+'    OPEN OUTPUT$ FOR RANDOM AS #4
+'    SEEK #4, 1
+'    PRINT #4,SPACE$(HEADER);
+    DO 
+        InLine$ = ""
+        Line Input #3,INLINE$
+        IF LEFT$(INLINE$,2) = "v " OR LEFT$(INLINE$,2) = "f " OR LEFT$(INLINE$,2) = "l "  THEN
+            i = 2
+            DO WHILE MID$(INLINE$,i,1) <> ""
+                InData$ = SPACE$(12)
+                j = 1
+                DO WHILE MID$(INLINE$,i,1) <> " " AND MID$(INLINE$,i,1) <> "" AND j < 12
+                    POKE VAR InData$,j,PEEK(VAR INLINE$,i)
+                    i = i + 1
+                    j = j + 1
+                LOOP
+                i = i + 1
+                POKE VAR InData$,0,j
+                IF INDATA$ <> " " THEN
+                    INDATA$ = TYPECAST$(VAL(InData$))
+                    PRINT #4,INDATA$;
+                                   IF LEFT$(INLINE$,2) = "f " OR LEFT$(INLINE$,2) = "l "  THEN
+                                          LINES = LINES + 1
+                                   ENDIF
+                ENDIF
+            LOOP
+            IF LEFT$(INLINE$,2) = "v " THEN
+                POINTS = POINTS + 1
+            ENDIF
+        ENDIF
+    LOOP UNTIL EOF(#3) <> 0
+    INDATA$ = TYPECAST$(POINTS)
+'    SEEK #4, 1
+'    PRINT #4,INDATA$;
+    CLOSE #3
+'    CLOSE #4
+END SUB
+
+SUB BINPREVIEW
+    HEADER = 32
+    INPUT FILENAME$
+    OPEN FILENAME$ FOR INPUT AS #5
+    WORD$ = INPUT$(HEADER, #5)
+    COUNT = TYPECAST(WORD$)
+    PRINT COUNT
+    FOR m = 0  TO COUNT
+        FOR l = 0 TO 2
+            WORD$ = INPUT$(4, #5)
+            NUMBER = TYPECAST(WORD$)
+            PRINT NUMBER ;
+        NEXT
+        PRINT ""
+    NEXT
+    CLOSE #5
+END SUB
+
+SUB REFORMAT
+    Input "ENTER .OBJ FILE: ",FILENAME$
+    Open FILENAME$ For INPUT As #3
+    OPEN "OUTPUT.TMP" FOR OUTPUT AS #4
+    DO 
+    InLine$ = ""
+    Line Input #3,INLINE$
+    IF LEFT$(INLINE$,2)="v " OR LEFT$(INLINE$,2)="f " OR LEFT$(INLINE$,2)="l " THEN 
+        IF LEFT$(INLINE$,2)="v " THEN
+            POINTS = POINTS + 1
+        ENDIF
+        FOR i = 1 TO LEN(INLINE$)
+            IF  MID$(INLINE$,i,1) = "/" THEN
+                DO 
+                    i = i + 1
+                LOOP UNTIL MID$(INLINE$,i,1) = " " OR MID$(INLINE$,i) = ""
+            ENDIF
+            IF MID$(INLINE$,i,1) = " " THEN
+                DO 
+                    i = i + 1
+                LOOP UNTIL MID$(INLINE$,i,1) <> " " OR MID$(INLINE$,i) = "" 
+                PRINT ",";
+                PRINT #4,",";
+            ENDIF
+            PRINT #4,MID$(INLINE$,i,1);
+            PRINT MID$(INLINE$,i,1);
+        NEXT
+        PRINT #4,","
+        PRINT ","
+    ENDIF
+LOOP UNTIL EOF(#3) <> 0
+PRINT #4,POINTS
+PRINT POINTS
+Close #3
+Close #4
+END SUB
+
+SUB LOWMEM
+    MAGX = 0.2
+    ANGLE = 0
+    INCRE = 15
+    POINTS = 0
+    CENTRE.X = MM.HRES/2
+    CENTRE.Y = MM.VRES/2
+    INPUT FILENAME$
+    Open FILENAME$ FOR INPUT AS #4
+    WORD$ = INPUT$(4,#4)
+    POINTS = TYPECAST(WORD$)
+    IGNORE$ = INPUT$(12,#4)
+    CLS
+    FOR p = 0 TO POINTS
+        BYTES$ = INPUT$(4,#4)
+        b = TYPECAST(BYTES$)
+        BYTES$ = INPUT$(4,#4)
+        c = TYPECAST(BYTES$)
+        BYTES$ = INPUT$(4,#4)
+        d = TYPECAST(BYTES$)
+        b = b * MAGX
+        c = c * MAGX
+        d = d * MAGX
+        PRINT @(0,0) b c d
+'        y=(c*Cos(Rad(-INCRE)))-(d*Sin(Rad(-INCRE)))
+'        z=(c*Sin(Rad(-INCRE)))+(d*Cos(Rad(-INCRE)))
+'        x=(b*Cos(Rad(135)))-(d*Sin(Rad(135)))
+'        z=(b*Sin(Rad(135)))+(d*Cos(Rad(135)))
+        b = b - 100
+        c = c - 100
+'        d = z - 100
+        ANGLE=DEG(ATN(b/(240+d)))
+        b = (TAN(RAD(ANGLE))*240)
+        ANGLE=DEG(ATN(c/(240+d)))
+        c = (TAN(RAD(ANGLE))*240)
+        PIXEL(CENTRE.X+b,CENTRE.Y-c)=7
+    NEXT
+    CLOSE #4
+END SUB
+
+SUB PROCVERTEX
+    MAGX = 4
+    ANGLE = 0
+    INCRE = 15
+    POINTS = 115200
+    MEMMAX = 1024
+    CENTRE.X = MM.HRES/2
+    CENTRE.Y = MM.VRES/2
+    Open "ROI.TMP" FOR INPUT AS #3
+'    IF POINTS > MEMMAX THEN
+'        POINTS = MEMMAX
+'    ENDIF
+'    DIM POINTS(POINTS,3)
+    i = 0
+    DO 'WHILE i < POINTS
+        INPUT #3,a$,b,c,d
+        PRINT @(0,0), i
+            IF LEFT$(a$,1) = "v" THEN
+                b = b * MAGX
+                c = c * MAGX
+                d = d * MAGX
+                y=(c*Cos(Rad(-INCRE)))-(d*Sin(Rad(-INCRE)))
+                z=(c*Sin(Rad(-INCRE)))+(d*Cos(Rad(-INCRE)))
+                x=(b*Cos(Rad(135)))-(d*Sin(Rad(135)))
+                z=(b*Sin(Rad(135)))+(d*Cos(Rad(135)))
+                    b = x - 50
+                    c = y - 50
+                    d = z - 50
+                ANGLE=DEG(ATN(b/(240+d)))
+                b = (TAN(RAD(ANGLE))*240)
+                ANGLE=DEG(ATN(c/(240+d)))
+                c = (TAN(RAD(ANGLE))*240)
+                PIXEL(CENTRE.X+b,CENTRE.Y-c)=7
+                IF i < POINTS THEN
+'                    POINTS(i,0) = b
+ '                   POINTS(i,1) = c
+  '                  POINTS(i,2) = d
+                    i = i + 1
+                ENDIF
+            ENDIF
+    LOOP
+    CLOSE #3
+END SUB
+
+SUB DRAWLINE
+       OPEN "OUTPUT.TMP" FOR INPUT AS #3 
+   DO
+         INPUT #3,a$,b,c,d
+        IF a$ = "f" or a$ = "l" THEN
+            x1 = CENTRE.X+POINTS(b,0)
+            y1 = CENTRE.Y-POINTS(b,1)
+            x2 = CENTRE.X+POINTS(c,0)
+            y2 = CENTRE.Y-POINTS(c,1)
+            IF b > 0 and b < MEMMAX and c > 0 and c < MEMMAX THEN
+                LINE(x1,y1)-(x2,y2),7
+                IF d > 0  and d < MEMMAX THEN        
+                    x3 = CENTRE.X+POINTS(d,0)
+                    y3 = CENTRE.Y-POINTS(d,1)
+                    LINE(x2,y2)-(x3,y3),7
+                    LINE(x3,y3)-(x1,y1),7
+                ENDIF
+            ENDIF
+        ENDIF
+    LOOP UNTIL EOF(#3) <> 0
+    CLOSE #3
+    CLEAR
+END SUB
+    
+'REFORMAT
+'PROCVERTEX
+'DRAWLINE
+'KILL "OUTPUT.TMP"
+'END

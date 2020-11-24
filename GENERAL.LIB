@@ -1,0 +1,7 @@
+SUB PLUS(val)
+    val = val + 1
+END SUB
+
+SUB MINUS(val)
+    val = val - 1
+END SUB

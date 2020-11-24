@@ -1,0 +1,2 @@
+10 CENTRE.X = (MM.HRes/2)
+20 CENTRE.Y = (MM.VRES/2)

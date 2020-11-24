@@ -1,0 +1,32 @@
+SUB COPYMEM(x1,y1,x2,y2)
+    DIM VIDEO(INT(x2/8)-INT(x1/8),y2-y1)
+    KILL "RVIDEO.DAT"
+    OPEN "RVIDEO.DAT" FOR OUTPUT AS #5
+    BYTE$ = " "
+    FOR j = y1 to y2
+        FOR i = INT(x1/8) to INT(x2/8)
+            VIDEO(i,j) = PEEK(RVIDEO,i*j)
+            POKE VAR BYTE$,1,VIDEO(i,j)
+            PRINT #5,BYTE$;
+        NEXT
+    NEXT
+    FOR j = y1 to y2
+        FOR i = INT(x1/8) to INT(x2/8)
+'            POKE RVIDEO,i*j,0)
+        NEXT
+    NEXT
+    CLOSE #5
+    ERASE VIDEO
+END SUB
+
+SUB PASTEMEM(x1,y1,x2,y2)
+    OPEN "RVIDEO.DAT" FOR INPUT AS #5
+    FOR j = y1 to y2
+        FOR i = INT(x1/8) to INT(x2/8)
+            BYTE$ = INPUT$(1,#5)
+            POKE RVIDEO,i*j,PEEK(VAR BYTE$,1)
+        NEXT
+    NEXT
+    CLOSE #5
+END SUB
+        
