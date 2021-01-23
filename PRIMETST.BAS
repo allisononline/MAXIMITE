@@ -1,0 +1,8 @@
+LIBRARY LOAD "PRIMENBR.LIB"
+x = 524286
+DO
+    IF CHECKPRIME(x) = 1 THEN
+        PRINT x;
+    ENDIF
+    x = x + 1
+LOOP

@@ -1,0 +1,10 @@
+Coil Winder
+by Ron Pugh
+ronee@telus.net
+
+The coil winder created by Ron uses a Maximite for computer control
+in conjunction with a pulse width modulation circuit to control bobin motor speed
+and a Sparkfun stepper motor controller.
+
+The current video is available at
+ http://youtu.be/lXV4aA0fCws

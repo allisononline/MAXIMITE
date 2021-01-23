@@ -1,0 +1,60 @@
+'Hearts and Bones
+'Hearts.fnt
+' $ = Heart Asc(36)
+' % = Bone  Asc(37)
+' & = Skull Asc(38)
+18,16,36,38
+                
+                
+                
+  xxx     xxx    
+ x   x   x   x  
+xxxxx x xxxxx x 
+xxxxxx xxxxxx x 
+xxxxxxxxxxxxx x 
+ xxxxxxxxxxx x  
+  xxxxxxxxx x   
+   xxxxxxx x    
+    xxxxx x     
+     xxxxx      
+      xxx       
+       x        
+                
+                
+                
+                
+                
+ xxx       xxx 
+xxxxx     xxxxx 
+xxxxx     xxxxx
+ xxxxx   xxxxx
+    xxx xxx
+     xxx x
+      xxx
+     x xxx
+    xxx xxx 
+ xxxxx   xxxxx
+xxxxxx   xxxxxx
+xxxxx     xxxxx
+ xxx       xxx 
+                
+                
+                
+                
+     xxxxx      
+   xxxxxxxxx     
+  xxxxxxxxxxx   
+ xxxxxxxxxxxxx  
+ xx   xxx   xx  
+ x     x     x  
+ xx    x    xx  
+ xxx  xxx  xxx  
+ xxxxx   xxxxx  
+  xxx     xxx   
+   xxxxxxxxx   
+    x x x x     
+    x x x x     
+    xxxxxxx   
+     xxxxx 
+                
+                

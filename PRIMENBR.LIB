@@ -1,0 +1,24 @@
+FUNCTION CHECKPRIME(NUMBER)
+    LOCAL k
+    NUMBER = FIX(NUMBER)
+    IF NUMBER < 1 THEN
+        ERROR "NUMBER LESS THAN ONE"
+    ENDIF
+    IF NUMBER =< 3 THEN
+        CHECKPRIME = 1
+        EXIT FUNCTION
+    ENDIF
+    IF NUMBER MOD(2) = 0 OR NUMBER MOD(3) = 0 THEN
+        CHECKPRIME = 0
+        EXIT FUNCTION
+    ENDIF
+    k = 1
+    DO WHILE (6*k)-1 =< SQR(NUMBER)
+        IF NUMBER MOD((6*k)-1) = 0 OR NUMBER MOD((6*k)+1) = 0 THEN
+            CHECKPRIME = 0
+            EXIT FUNCTION
+        ENDIF
+        k = k + 1
+    LOOP
+    CHECKPRIME = 1
+END FUNCTION

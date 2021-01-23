@@ -5,3 +5,26 @@ END SUB
 SUB MINUS(val)
     val = val - 1
 END SUB
+
+SUB SCREENSHOTACTIVE
+    ON KEY JUMP
+    JUMP: K$ = INKEY$
+        IF K$ = CHR$(156) THEN
+            SAVEBMP
+        ENDIF
+    IRETURN
+    PRINT "Screenshot key (F12) activated"
+END SUB
+
+FUNCTION TYPECAST(BYTES$)
+    FOR J = 0 TO 3
+            POKE VAR TYPECAST,J,PEEK(VAR BYTES$,J+1)
+    NEXT
+END FUNCTION
+
+FUNCTION TYPECAST$(INTEGER)
+    TYPECAST$ = "    "
+    FOR J = 0 TO 3
+        POKE VAR TYPECAST$,J+1,PEEK(VAR INTEGER,J)
+    NEXT
+END FUNCTION

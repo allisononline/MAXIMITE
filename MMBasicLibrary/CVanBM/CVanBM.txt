@@ -1,0 +1,38 @@
+Caravan Battery Monitor Program - Notes
+---------------------------------------
+
+A very good mate of mine some years ago when I was working introduced the concept "Creeping Elegance" - 
+a term he used somewhat tongue in cheek disparagingly to note engineer's habits of continually trying
+to "improve it a bit more"!
+
+This is a classic example!!!
+
+I started as a caravanner wanting a good/better method of monitoring the status of the van batteries, the solar charging system and how long till "brownout" when free-camping.  What few commercial systems available, were several thousand dollars and almost imppossible to retrofit to an existing van without ditching everything and starting again - a major and cost prohibitive exercise.
+
+Accordingly, in true engineering thinking, I said, "Self, I can do this with MM and some custom h/w circuitry", hence the CVANBM project was born.
+
+It is still VERY MUCH a work in progress which I will potter away at, for some time probably due to the issues in paragraph 1 above ;-)
+
+Firstly, the h/w - see the circuit diagram PDF - I have two current shunts, 1 in the charging earth lead to the battery and 1 in the load earth lead.  These are 1mOhm shunts which develop 1mV per Amp through them and rated 50Amp shunts.  This is too small to sense with the MM directly so I needed to DC amplify up so that 50Amps through the shunt giving a reading of 50mV across the shunt is amplified up to 2.5V into the MM.
+
+The cct shows two dual op amps configured as two amps in each line, the first having around times 20 amplification with offset adjustment and the second with around 2.5 amplification acting more as a buffer.
+
+Because of the earthing issues and the current flow, one string has an inverting input mode and the other a non-inverting mode of operation - I need to change this and have all 0V rails the same as the chassis earth and then use both amps in inverting input mode.
+
+The main problem is that I need to sense the voltage across each shunt independent of the other so that in software I can calculate actual current into or out of the battery by subtracting load current from charge current( as charge current could also have a load current component).
+
+Also in this cct, I use a 555 as a current charge pump to generate a negative voltage for the op-amps.
+
+This is not meant to be an extensive or precise explanation of how the cct works - feel free to contact me if you have questions/suggestions.
+
+Now for the software:  The program is HEAVILY commented, almost to excess some might say ;-)
+
+Currently, it sends its output via the USB interface to a PC running TerraTerm. Running it to a VGA monitor will show rubbish on the screen. VGA output is coming!
+
+The DEBUG mode simulates voltage and current readings so the code can be tested.  At this stage, I am pretty happy with the program side as it appears to work OK for me (ONLY TO USB).
+
+I have ordered a 7" VGA display so my next step is to modify the graphing sections of code to provide a better display of instantaneous values, preferrably on a colour MM if I can get it past SWMBO.
+
+Again, I am happy to discuss with anyone, either direct to douglas.pankhurst@bigpond.com or via the BackShed Microcontroller site - username "panky"
+
+Regards, Doug.

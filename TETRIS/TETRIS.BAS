@@ -818,7 +818,7 @@ Sub GAME
             ENDIF
             Do While TIMER < COUNT
                 KEYPRESS
-                CONTROLLER
+'                CONTROLLER
             LOOP
             TIMER = 0
         LOOP

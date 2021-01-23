@@ -1,0 +1,8 @@
+Magic Switchboard
+
+This is rewrite of the magic switchboard program to suit MMbasic.  The original was written by Picaxe technical for the picaxe 18x.
+
+This program uses four input switches connected to pins 11, 12, 13 and 14 and the output (either white LEDs with colour tops or 6V coloured lamps) connected to Pins 15,16,17 and 18.  The lamps require driver transistors.   The schmatic of the Magic Switchboard is in file magicbox.jpg and you can see a demonstration of it at www.youtube.com/watch?v=0lGP8nQLANU. It is truly amazing.
+
+
+Regards Bill Brown

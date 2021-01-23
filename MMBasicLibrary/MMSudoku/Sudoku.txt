@@ -1,0 +1,35 @@
+Hello all.
+
+Here's SUDOKU for Maximite version 1.0 (final?).
+
+Features:
+
+Requires MMbasic v3.1.
+Three types of difficulty: Easy, Medium and Hard.
+In the empty grid you can enter numbers and key lock.
+If a number is repeated on the same row or column or box failure is reported.
+Save and load the game.
+
+Sorry the comments were mixed English and Italian. 
+
+Raros.
+
+For comments and suggestions:
+raros on forum 'The Back Shed'
+Facebook Raffaele Rotondo
+Skype raros0101 or raros_eepc
+
+
+Italiano:
+
+Salve a Tutti.
+
+Ecco il SUDOKU per Maximite versione 1.0 (finale?).
+
+Caratteristiche:
+
+Richiede MMbasic v3.1.
+Tre tipi di difficoltà: Facile, Medio e Difficile.
+Nella griglia vuota si possono inserire dei numeri chiave e bloccarli.
+Se si ripete un numero sulla stessa riga o colonna o riquadro segnala errore.
+Salva e carica il gioco.

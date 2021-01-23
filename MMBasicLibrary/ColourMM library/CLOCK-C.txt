@@ -1,0 +1,2 @@
+CLOCK-C.BAS	This version of CLOCK.BAS for the Colour Maximite is 
+		in the Analogue Clock folder.

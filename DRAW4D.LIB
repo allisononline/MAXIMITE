@@ -1,0 +1,205 @@
+Sub ROTATE(DIR$)
+    x = 0
+    y = 0
+    z = 0
+    w = 0
+    INCRE = 15
+    For i = 0 To POINTS - 1
+        If DIR$ = "XY" Then
+            x = (POINT(i,0)*Cos(Rad(-INCRE)))-(POINT(i,1)*Sin(Rad(-INCRE)))
+            y = (POINT(i,0)*Sin(Rad(-INCRE)))+(POINT(i,1)*Cos(Rad(-INCRE)))
+            POINT(i,0) = x
+            POINT(i,1) = y
+        ElseIf DIR$ = "XZ" Then
+            x = (POINT(i,0)*Cos(Rad(-INCRE)))-(POINT(i,2)*Sin(Rad(-INCRE)))
+            z = (POINT(i,0)*Sin(Rad(-INCRE)))+(POINT(i,2)*Cos(Rad(-INCRE)))
+            POINT(i,0) = x
+            POINT(i,2) = z
+        ElseIf DIR$ = "YZ" Then
+            y = (POINT(i,1)*Cos(Rad(-INCRE)))-(POINT(i,2)*Sin(Rad(-INCRE)))
+            z = (POINT(i,1)*Sin(Rad(-INCRE)))+(POINT(i,2)*Cos(Rad(-INCRE)))
+            POINT(i,1) = y
+            POINT(i,2) = z
+        ElseIf DIR$ = "WX" Then
+            w = (POINT(i,3)*Cos(Rad(-INCRE)))-(POINT(i,0)*Sin(Rad(-INCRE)))
+            x = (POINT(i,3)*Sin(Rad(-INCRE)))+(POINT(i,0)*Cos(Rad(-INCRE)))
+            POINT(i,3) = w
+            POINT(i,0) = x
+        ElseIf DIR$ = "WY" Then
+            w = (POINT(i,3)*Cos(Rad(-INCRE)))-(POINT(i,1)*Sin(Rad(-INCRE)))
+            y = (POINT(i,3)*Sin(Rad(-INCRE)))+(POINT(i,1)*Cos(Rad(-INCRE)))
+            POINT(i,3) = w
+            POINT(i,1) = y
+        ElseIf DIR$ = "WZ" Then
+            w = (POINT(i,3)*Cos(Rad(-INCRE)))-(POINT(i,2)*Sin(Rad(-INCRE)))
+            z = (POINT(i,3)*Sin(Rad(-INCRE)))+(POINT(i,2)*Cos(Rad(-INCRE)))
+            POINT(i,3) = w
+            POINT(i,2) = z
+        EndIf
+    Next
+End Sub
+
+Sub KEYPRESS()
+    KEYPRESS$ = Inkey$
+    If KEYPRESS$ <> "" Then
+        If KEYPRESS$ = "q" Then
+            ROTATE("XY")
+            DRAW()
+        ElseIf KEYPRESS$ = "e" Then
+            ROTATE("XZ")
+            DRAW()
+        ElseIf KEYPRESS$ = "w" Then
+            ROTATE("YZ")
+            DRAW()
+        ElseIf KEYPRESS$ = "s" Then
+            ROTATE("WX")
+            DRAW()
+        ElseIf KEYPRESS$ = "a" Then
+            ROTATE("WY")
+            DRAW()
+        ElseIf KEYPRESS$ = "d" Then
+            ROTATE("WY")
+            DRAW()
+        EndIf
+    EndIf
+End Sub
+
+
+SUB REFORMAT
+    POINTS = 0
+    LINES = 0
+    Input "ENTER .OBJ FILE: ",FILENAME$
+    Open FILENAME$ For INPUT As #3
+    OPEN "OUTPUT.TMP" FOR OUTPUT AS #4
+    DO 
+        Line Input #3,INLINE$
+        IF LEFT$(INLINE$,2)="v " OR LEFT$(INLINE$,2)="f " OR LEFT$(INLINE$,2)="l " THEN 
+            IF LEFT$(INLINE$,2)="v " THEN
+                POINTS = POINTS + 1
+            ENDIF
+            IF LEFT$(INLINE$,2)="f " OR LEFT$(INLINE$,2)="l " THEN
+                LINES = LINES + 1
+            ENDIF
+            FOR i = 1 TO LEN(INLINE$)
+                IF  MID$(INLINE$,i,1) = "/" THEN
+                    DO 
+                        i = i + 1
+                    LOOP UNTIL MID$(INLINE$,i,1) = " " OR MID$(INLINE$,i) = ""
+                ENDIF
+                IF MID$(INLINE$,i,1) = " " THEN
+                    DO 
+                        i = i + 1
+                    LOOP UNTIL MID$(INLINE$,i,1) <> " " OR MID$(INLINE$,i) = "" 
+                    PRINT ",";
+                    PRINT #4,",";
+                ENDIF
+                PRINT #4,MID$(INLINE$,i,1);
+                PRINT MID$(INLINE$,i,1);
+            NEXT
+            PRINT #4,","
+            PRINT ","
+        ENDIF
+    LOOP UNTIL EOF(#3) <> 0
+    PRINT #4,POINTS
+    PRINT POINTS
+    PRINT #4,LINES
+    PRINT LINES
+    Close #3
+    Close #4
+END SUB
+
+SUB LOADPOINTS
+    XOFFSET = 0
+    YOFFSET = 0
+    ZOFFSET = 0
+    MAGX = 1
+    MEMMAX = 1024
+    Open "OUTPUT.TMP" For INPUT As #3
+    IF POINTS > MEMMAX THEN
+        POINTS = MEMMAX
+    ENDIF
+    IF LINES > MEMMAX THEN
+        LINES = MEMMAX
+    ENDIF
+    DIM POINT(POINTS,4)
+    DIM VERTEX(LINES,3)
+    LOCAL i = 0
+    LOCAL j = 0
+    DO WHILE i < POINTS OR j < LINES AND EOF(#3) = 0
+        INPUT #3, a$,x,y,z
+        IF a$ = "v" THEN
+            POINT(i,0) = x
+            POINT(i,1) = y
+            POINT(i,2) = z
+            POINT(i,3) = 0
+            i = i + 1
+        ENDIF
+        IF a$ = "f" OR a$ = "l" THEN
+            VERTEX(j,0) = x
+            VERTEX(j,1) = y
+            VERTEX(j,2) = z
+            j = j + 1
+        ENDIF
+    LOOP
+    CLOSE #3
+END SUB
+
+Function FOV(COORD1,COORD2)
+    DISTANCE = 240
+    ANGLE = Deg(Atn(COORD1 / (DISTANCE + COORD2)))
+    FOV = (Tan(Rad(ANGLE)) * DISTANCE)
+End Function
+
+Sub DRAW()
+    DRAW.X.1 = 0
+    DRAW.Y.1 = 0
+    DRAW.X.2 = 0
+    DRAW.Y.2 = 0
+    Cls
+    FOR i = 0 TO LINES - 1
+        DRAW.X.1 = (FOV(POINT(VERTEX(i,0),0),POINT(VERTEX(i,0),3)) * MAGX) + XOFFSET
+        DRAW.Y.1 = (FOV(POINT(VERTEX(i,0),1),POINT(VERTEX(i,0),3)) * MAGX) + YOFFSET
+        DRAW.X.2 = (FOV(POINT(VERTEX(i,1),0),POINT(VERTEX(i,1),3)) * MAGX) + XOFFSET
+        DRAW.Y.2 = (FOV(POINT(VERTEX(i,1),1),POINT(VERTEX(i,1),3)) * MAGX) + YOFFSET
+    '    DRAW.X.1 = (FOV(DRAW.X.1,(POINT(VERTEX(i,0),2)+ZOFFSET)) * MAGX) + XOFFSET
+    '    DRAW.Y.1 = (FOV(DRAW.Y.1,(POINT(VERTEX(i,0),2)+ZOFFSET)) * MAGX) + YOFFSET
+    '    DRAW.X.2 = (FOV(DRAW.X.2,(POINT(VERTEX(i,1),2)+ZOFFSET)) * MAGX) + XOFFSET
+    '    DRAW.Y.2 = (FOV(DRAW.Y.2,(POINT(VERTEX(i,1),2)+ZOFFSET)) * MAGX) + YOFFSET
+        LINE(CENTRE.X+DRAW.X.1,CENTRE.Y+DRAW.Y.1)-(CENTRE.X+DRAW.X.2,CENTRE.Y+DRAW.Y.2),2
+    NEXT
+End Sub
+
+SUB DRAWLINE
+    CENTRE.X = MM.HRES/2
+    CENTRE.Y = MM.VRES/2
+    CLS
+    FOR j = 0 TO LINES - 1
+        b = POINT(LINES(j,0)-1,0) * MAGX
+        c = POINT(LINES(j,0)-1,1) * MAGX
+        d = POINT(LINES(j,0)-1,2) * MAGX
+        e = POINT(LINES(j,1)-1,0) * MAGX
+        f = POINT(LINES(j,1)-1,1) * MAGX
+        g = POINT(LINES(j,1)-1,2) * MAGX
+        b = FOV(POINT(VERTEX(i,0),1),POINT(VERTEX(i,0),3))
+        c = FOV(POINT(VERTEX(i,0),2),POINT(VERTEX(i,0),3))
+        e = FOV(POINT(VERTEX(i,1),1),POINT(VERTEX(i,1),3))
+        f = FOV(POINT(VERTEX(i,1),2),POINT(VERTEX(i,1),3))
+        b = FOV(b,POINT(VERTEX(i,0),2+ZOFFSET))+XOFFSET
+        c = FOV(c,POINT(VERTEX(i,0),2+ZOFFSET))+YOFFSET
+        e = FOV(e,POINT(VERTEX(i,1),2+ZOFFSET))+XOFFSET
+        f = FOV(f,POINT(VERTEX(i,1),2+ZOFFSET))+YOFFSET
+        LINE(CENTRE.X+b,CENTRE.Y-c)-(CENTRE.X+e,CENTRE.Y-f)
+    NEXT
+END SUB
+
+SUB DEMO
+    DO
+        KEYPRESS()
+    LOOP
+END SUB
+    
+'REFORMAT
+'PROCVERTEX
+'DRAWLINE
+'KILL "OUTPUT.TMP"
+'END

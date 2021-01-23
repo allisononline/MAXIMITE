@@ -1,0 +1,13 @@
+Maximite BASIC v2.4 Analog Clock
+
+Original code by Eugene Villar (for the clock) and Ray Thomas (for the day of week).
+
+Modified for Maximite BASIC by Bob Devries, June, 2011
+
+http://geoffg.net/maximite.html
+
+http://www.thebackshed.com/forum/forum_topics.asp?FID=16
+
+Regards,
+Bob Devries
+Dalby, QLD, Australia
