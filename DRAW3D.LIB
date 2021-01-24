@@ -1,212 +1,278 @@
-SUB READFILE
-    CLEAR
-    Input "ENTER .OBJ FILE: ",FILENAME$
-    INLINE$ = ""
-    COUNTPOINTSLINES(FILENAME$)
-    Open FILENAME$ For INPUT As #3
-    POINTCNT = 0
-    LINECNT = 0
-    DO WHILE EOF(#3) = 0
-        LINE INPUT #3,INLINE$
-        IF WORD$(INLINE$,1) = "v" THEN
-            READPOINTS(INLINE$,POINTCNT)
-            POINTCNT = POINTCNT + 1
-        ELSEIF WORD$(INLINE$,1) = "f" OR WORD$(INLINE$,1) = "l" THEN
-            READLINES(INLINE$,LINECNT)
-            LINECNT = LINECNT + 1
-        ENDIF
-    LOOP 
-    CLOSE #3
-    NORMALISE
+'cats'
+FUNCTION TYPECAST(BYTES$)
+       FOR J = 0 TO 3
+              POKE VAR TYPECAST,J,PEEK(VAR BYTES$,J+1)
+       NEXT
+END FUNCTION
+
+FUNCTION TYPECAST$(INTEGER)
+        TYPECAST$ = "    "
+        FOR J = 0 TO 3
+                 POKE VAR TYPECAST$,J+1,PEEK(VAR INTEGER,J)
+        NEXT
+END FUNCTION
+
+SUB LINEREAD(INLINE$,a$,b$,c$,d$)
+       i = 1
+       j = 1
+       DO WHILE MID$(INLINE$,i,1) <> ""
+              IF MID$(INLINE$,i,1) = "/" OR MID$(INLINE$,i,1) = " "
+                     IF i > j THEN
+                            DATA MID$(INLINE$,j,i)
+                     ENDIF
+                     IF MID$(INLINE$,i,1) = "/" THEN
+                            DO UNTIL MID$(INLINE$,i,1) = " "
+                                   PLUS(i)
+                                   PLUS(j)
+                            LOOP
+                     ELSE IF MID$(INLINE$,i,1) = " " THEN
+                            DO UNTIL MID$(INLINE$,i,1) <> " "
+                                   PLUS(i)
+                                   PLUS(j)
+                            LOOP
+                     ENDIF
+              ENDIF
+              PLUS(i)
+       LOOP
+       READ a$,b$,c$,d$
 END SUB
 
-SUB COUNTPOINTSLINES(FILENAME2$)
+
+SUB BINFORMAT
+    HEADER = 32
     POINTS = 0
-    LINES = 0
-    MEMMAX = 1024
-    Open FILENAME2$ For INPUT As #3
-    DO WHILE EOF(#3) = 0
-        Line Input #3,INLINE$
-        IF WORD$(INLINE$,1) = "v" THEN
-            POINTS = POINTS + 1
-        ELSEIF WORD$(INLINE$,1) = "f" OR WORD$(INLINE$,1) = "l" THEN
-            LINES = LINES + 1
-        ENDIF
-    LOOP
+       LINES = -1
+    Input "ENTER .OBJ FILE: ",FILENAME$
+    Open FILENAME$ For INPUT As #3
+    OUTPUT$ = LEFT$(FILENAME$,LEN(FILENAME$)-4)+".BIN"
+    DO 
+        Line Input #3,LINES$
+              LINEREAD(LINES$,t$,x$,y$,z$)
+              IF t$ = "v" THEN
+                     PLUS(POINTS)
+              IF t$ = "f" OR t$ = "l"
+                     IF z$ <> "" THEN
+                            PLUS(LINES)
+                            PLUS(LINES)
+                     ELSE
+                            PLUS(LINES)
+                     ENDIF
+              ENDIF
+              PRINT t$ ;x$; y$; z$
+    LOOP UNTIL EOF(#3) <> 0
+    PRINT POINTS
+       PRINT LINES
     CLOSE #3
+END SUB
+
+SUB COMPRESS
+    j = 0
+    i = 0
+    HEADER = 32
+    POINTS = 0
+    Input "ENTER .OBJ FILE: ",FILENAME$
+    Open FILENAME$ For INPUT As #3
+'    OUTPUT$ = LEFT$(FILENAME$,LEN(FILENAME$)-4)+".BIN"
+'    OPEN OUTPUT$ FOR RANDOM AS #4
+'    SEEK #4, 1
+'    PRINT #4,SPACE$(HEADER);
+    DO 
+        InLine$ = ""
+        Line Input #3,INLINE$
+        IF LEFT$(INLINE$,2) = "v " OR LEFT$(INLINE$,2) = "f " OR LEFT$(INLINE$,2) = "l "  THEN
+            i = 2
+            DO WHILE MID$(INLINE$,i,1) <> ""
+                InData$ = SPACE$(12)
+                j = 1
+                DO WHILE MID$(INLINE$,i,1) <> " " AND MID$(INLINE$,i,1) <> "" AND j < 12
+                    POKE VAR InData$,j,PEEK(VAR INLINE$,i)
+                    i = i + 1
+                    j = j + 1
+                LOOP
+                i = i + 1
+                POKE VAR InData$,0,j
+                IF INDATA$ <> " " THEN
+                    INDATA$ = TYPECAST$(VAL(InData$))
+                    PRINT #4,INDATA$;
+                                   IF LEFT$(INLINE$,2) = "f " OR LEFT$(INLINE$,2) = "l "  THEN
+                                          LINES = LINES + 1
+                                   ENDIF
+                ENDIF
+            LOOP
+            IF LEFT$(INLINE$,2) = "v " THEN
+                POINTS = POINTS + 1
+            ENDIF
+        ENDIF
+    LOOP UNTIL EOF(#3) <> 0
+    INDATA$ = TYPECAST$(POINTS)
+'    SEEK #4, 1
+'    PRINT #4,INDATA$;
+    CLOSE #3
+'    CLOSE #4
+END SUB
+
+SUB BINPREVIEW
+    HEADER = 32
+    INPUT FILENAME$
+    OPEN FILENAME$ FOR INPUT AS #5
+    WORD$ = INPUT$(HEADER, #5)
+    COUNT = TYPECAST(WORD$)
+    PRINT COUNT
+    FOR m = 0  TO COUNT
+        FOR l = 0 TO 2
+            WORD$ = INPUT$(4, #5)
+            NUMBER = TYPECAST(WORD$)
+            PRINT NUMBER ;
+        NEXT
+        PRINT ""
+    NEXT
+    CLOSE #5
+END SUB
+
+SUB REFORMAT
+    Input "ENTER .OBJ FILE: ",FILENAME$
+    Open FILENAME$ For INPUT As #3
+    OPEN "OUTPUT.TMP" FOR OUTPUT AS #4
+    DO 
+    InLine$ = ""
+    Line Input #3,INLINE$
+    IF LEFT$(INLINE$,2)="v " OR LEFT$(INLINE$,2)="f " OR LEFT$(INLINE$,2)="l " THEN 
+        IF LEFT$(INLINE$,2)="v " THEN
+            POINTS = POINTS + 1
+        ENDIF
+        FOR i = 1 TO LEN(INLINE$)
+            IF  MID$(INLINE$,i,1) = "/" THEN
+                DO 
+                    i = i + 1
+                LOOP UNTIL MID$(INLINE$,i,1) = " " OR MID$(INLINE$,i) = ""
+            ENDIF
+            IF MID$(INLINE$,i,1) = " " THEN
+                DO 
+                    i = i + 1
+                LOOP UNTIL MID$(INLINE$,i,1) <> " " OR MID$(INLINE$,i) = "" 
+                PRINT ",";
+                PRINT #4,",";
+            ENDIF
+            PRINT #4,MID$(INLINE$,i,1);
+            PRINT MID$(INLINE$,i,1);
+        NEXT
+        PRINT #4,","
+        PRINT ","
+    ENDIF
+LOOP UNTIL EOF(#3) <> 0
+PRINT #4,POINTS
+PRINT POINTS
+Close #3
+Close #4
+END SUB
+
+SUB LOWMEM
+    MAGX = 0.2
+    ANGLE = 0
+    INCRE = 15
+    POINTS = 0
+    CENTRE.X = MM.HRES/2
+    CENTRE.Y = MM.VRES/2
+    INPUT FILENAME$
+    Open FILENAME$ FOR INPUT AS #4
+    WORD$ = INPUT$(4,#4)
+    POINTS = TYPECAST(WORD$)
+    IGNORE$ = INPUT$(12,#4)
+    CLS
+    FOR p = 0 TO POINTS
+        BYTES$ = INPUT$(4,#4)
+        b = TYPECAST(BYTES$)
+        BYTES$ = INPUT$(4,#4)
+        c = TYPECAST(BYTES$)
+        BYTES$ = INPUT$(4,#4)
+        d = TYPECAST(BYTES$)
+        b = b * MAGX
+        c = c * MAGX
+        d = d * MAGX
+        PRINT @(0,0) b c d
+'        y=(c*Cos(Rad(-INCRE)))-(d*Sin(Rad(-INCRE)))
+'        z=(c*Sin(Rad(-INCRE)))+(d*Cos(Rad(-INCRE)))
+'        x=(b*Cos(Rad(135)))-(d*Sin(Rad(135)))
+'        z=(b*Sin(Rad(135)))+(d*Cos(Rad(135)))
+        b = b - 50
+        c = c - 50
+'        d = z - 50
+        ANGLE=DEG(ATN(b/(240+d)))
+        b = (TAN(RAD(ANGLE))*240)
+        ANGLE=DEG(ATN(c/(240+d)))
+        c = (TAN(RAD(ANGLE))*240)
+        PIXEL(CENTRE.X+b,CENTRE.Y-c)=7
+    NEXT
+    CLOSE #4
+END SUB
+
+SUB PROCVERTEX
+    MAGX = 2
+    ANGLE = 0
+    INCRE = 15
+    POINTS = 114076
+    CENTRE.X = MM.HRES/2
+    CENTRE.Y = MM.VRES/2
+    Open "ROI.TMP" FOR INPUT AS #3
     IF POINTS > MEMMAX THEN
         POINTS = MEMMAX
     ENDIF
-    IF LINES > MEMMAX THEN
-        LINES = MEMMAX
-    ENDIF
     DIM POINTS(POINTS,3)
-    DIM LINES(LINES,3)
-END SUB
-
-SUB READPOINTS(INLINE2$,POINT2)
-    i = 2
-    FOR j = 0 TO 2
-        POINTS(POINT2,j) = VAL(WORD$(INLINE2$,i))
-        i = i + LEN(WORD$(INLINE2$,i))
-    NEXT
-END SUB
-
-SUB READLINES(INLINE2$,LINE2)
-    i = 2
-    FOR j = 0 TO 2
-        LINES(LINE2,j) = VAL(WORD$(INLINE2$,i))
-        i = i + LEN(WORD$(INLINE2$,i))
-    NEXT
-END SUB
-
-FUNCTION WORD$(INLINE3$,START,NOSPC)
-    IF START < 1 THEN
-        START = 1
-    ENDIF
-    LOCAL k = 0
-    WORD$ = ""
-    DO WHILE MID$(INLINE3$,START+k,1) = " "
-        k = k + 1
-        IF NOSPC <> 0 THEN
-            START = START + 1
-        ENDIF
-    LOOP
-    DO WHILE MID$(INLINE3$,START+k,1) <> " " AND (START+k) =< LEN(INLINE3$)
-        k = k + 1
-    LOOP 
-    IF k > 0 THEN
-        WORD$ = MID$(INLINE3$,START,k)
-    ENDIF
-END FUNCTION
-
-Sub ROTATE(DIR$,INCRE)
-    IF INCRE = 0 THEN
-        INCRE = 15
-    ENDIF
-    For i = 0 To POINTS - 1
-        If DIR$ = "ZMINUS" Then
-            x = (POINTS(i, 0) * Cos(Rad(INCRE))) - (POINTS(i, 1) * Sin(Rad(INCRE)))
-            y = (POINTS(i, 0) * Sin(Rad(INCRE))) + (POINTS(i, 1) * Cos(Rad(INCRE)))
-            POINTS(i, 0) = x
-            POINTS(i, 1) = y
-        ElseIf DIR$ = "ZPLUS" Then
-            x = (POINTS(i, 0) * Cos(Rad(-INCRE))) - (POINTS(i, 1) * Sin(Rad(-INCRE)))
-            y = (POINTS(i, 0) * Sin(Rad(-INCRE))) + (POINTS(i, 1) * Cos(Rad(-INCRE)))
-            POINTS(i, 0) = x
-            POINTS(i, 1) = y
-        ElseIf DIR$ = "XMINUS" Then
-            y = (POINTS(i, 1) * Cos(Rad(INCRE))) - (POINTS(i, 2) * Sin(Rad(INCRE)))
-            z = (POINTS(i, 1) * Sin(Rad(INCRE))) + (POINTS(i, 2) * Cos(Rad(INCRE)))
-            POINTS(i, 1) = y
-            POINTS(i, 2) = z
-        ElseIf DIR$ = "XPLUS" Then
-            y = (POINTS(i, 1) * Cos(Rad(-INCRE))) - (POINTS(i, 2) * Sin(Rad(-INCRE)))
-            z = (POINTS(i, 1) * Sin(Rad(-INCRE))) + (POINTS(i, 2) * Cos(Rad(-INCRE)))
-            POINTS(i, 1) = y
-            POINTS(i, 2) = z
-        ElseIf DIR$ = "YMINUS" Then
-            x = (POINTS(i, 0) * Cos(Rad(INCRE))) - (POINTS(i, 2) * Sin(Rad(INCRE)))
-            z = (POINTS(i, 0) * Sin(Rad(INCRE))) + (POINTS(i, 2) * Cos(Rad(INCRE)))
-            POINTS(i, 0) = x
-            POINTS(i, 2) = z
-        ElseIf DIR$ = "YPLUS" Then
-            x = (POINTS(i, 0) * Cos(Rad(-INCRE))) - (POINTS(i, 2) * Sin(Rad(-INCRE)))
-            z = (POINTS(i, 0) * Sin(Rad(-INCRE))) + (POINTS(i, 2) * Cos(Rad(-INCRE)))
-            POINTS(i, 0) = x
-            POINTS(i, 2) = z
-        EndIf
-    Next
-End Sub
-
-SUB NORMALISE
-    HIGHEST = 0
-    FOR i = 0 TO POINTS - 1
-        FOR j = 0 TO 2
-            IF ABS(POINTS(i,j)) > HIGHEST THEN
-                HIGHEST = POINTS(i,j)
+    i = 0
+    DO WHILE i < POINTS
+        INPUT #3,a$,b,c,d
+        PRINT @(0,0), i
+            IF LEFT$(a$,1) = "v" THEN
+                b = b * MAGX
+                c = c * MAGX
+                d = d * MAGX
+                y=(c*Cos(Rad(-INCRE)))-(d*Sin(Rad(-INCRE)))
+                z=(c*Sin(Rad(-INCRE)))+(d*Cos(Rad(-INCRE)))
+                x=(b*Cos(Rad(135)))-(d*Sin(Rad(135)))
+                z=(b*Sin(Rad(135)))+(d*Cos(Rad(135)))
+                    b = x - 50
+                    c = y - 50
+                    d = z - 50
+                ANGLE=DEG(ATN(b/(240+d)))
+                b = (TAN(RAD(ANGLE))*240)
+                ANGLE=DEG(ATN(c/(240+d)))
+                c = (TAN(RAD(ANGLE))*240)
+                PIXEL(CENTRE.X+b,CENTRE.Y-c)=7
+                IF i < POINTS THEN
+                    POINTS(i,0) = b
+                    POINTS(i,1) = c
+                    POINTS(i,2) = d
+                    i = i + 1
+                ENDIF
             ENDIF
-        NEXT
-    NEXT
-    FOR i = 0 TO POINTS - 1
-        FOR j = 0 TO 2
-            POINTS(i,j) = POINTS(i,j) / HIGHEST
-        NEXT
-    NEXT
-END SUB
-
-SUB DRAWLINE(MAGX,XOFFSET,YOFFSET,ZOFFSET)
-    LOCAL CURRENT(6)
-    CENTRE.X = MM.HRES/2
-    CENTRE.Y = MM.VRES/2
-    IF MAGX = 0 THEN
-        MAGX = 150
-    ENDIF
-    FOR j = 0 TO LINES-1
-        FOR i = 0 TO 2
-            CURRENT(i) = POINTS(LINES(j,0),i) * MAGX
-            CURRENT(i+3) = POINTS(LINES(j,1),i) * MAGX
-        NEXT
-        FOR i = 0 TO 1
-            CURRENT(i) = FOV(CURRENT(i)+XOFFSET,CURRENT(2)+ZOFFSET)
-            CURRENT(i+3) = FOV(CURRENT(i)+YOFFSET,CURRENT(2)+ZOFFSET)
-        NEXT
-        x1 = CENTRE.X+CURRENT(0)
-        y1 = CENTRE.Y+CURRENT(1)
-        x2 = CENTRE.X+CURRENT(3)
-        y2 = CENTRE.Y+CURRENT(4)
-        LINE(x1,y1)-(x2,y2)
-        IF LINES(j,2) > 0 THEN
-            FOR i = 0 TO 2
-                CURRENT(i) = POINTS(LINES(j,1),i) * MAGX
-                CURRENT(i+3) = POINTS(LINES(j,2),i) * MAGX
-            NEXT
-            FOR i = 0 TO 1
-                CURRENT(i) = FOV(CURRENT(i)+XOFFSET,CURRENT(2)+ZOFFSET)
-                CURRENT(i+3) = FOV(CURRENT(i)+YOFFSET,CURRENT(2)+ZOFFSET)
-            NEXT
-            x1 = CENTRE.X+CURRENT(0)
-            y1 = CENTRE.Y+CURRENT(1)
-            x2 = CENTRE.X+CURRENT(3)
-            y2 = CENTRE.Y+CURRENT(4)
-            LINE(x1,y1)-(x2,y2)
-        ENDIF
-    NEXT
-END SUB
-
-Function FOV(COORD1,COORD2)
-    DISTANCE = 240
-    ANGLE = Deg(Atn(COORD1 / (DISTANCE + COORD2)))
-    FOV = (Tan(Rad(ANGLE)) * DISTANCE)
-End Function
-
-Sub KEYPRESS
-    KEYPRESS$ = InKey$
-    If KEYPRESS$ <> "" Then
-        If KEYPRESS$ = "q" Then
-            ROTATE("ZMINUS")
-            SENDLINES
-        ElseIf KEYPRESS$ = "e" Then
-            ROTATE("ZPLUS")
-            SENDLINES
-        ElseIf KEYPRESS$ = "w" Then
-            ROTATE("XMINUS")
-            SENDLINES
-        ElseIf KEYPRESS$ = "s" Then
-            ROTATE("XPLUS")
-            SENDLINES
-        ElseIf KEYPRESS$ = "a" Then
-            ROTATE("YMINUS")
-            SENDLINES
-        ElseIf KEYPRESS$ = "CURRENT(2)" Then
-            ROTATE("YPLUS")
-            SENDLINES
-        EndIf
-    EndIf
-End Sub
-
-SUB DEMO
-    DO
-        KEYPRESS
     LOOP
 END SUB
+
+SUB DRAWLINE
+    DO
+        INPUT #3,a$,b,c,d
+        IF a$ = "f" or a$ = "l" THEN
+            x1 = CENTRE.X+POINTS(b,0)
+            y1 = CENTRE.Y-POINTS(b,1)
+            x2 = CENTRE.X+POINTS(c,0)
+            y2 = CENTRE.Y-POINTS(c,1)
+            IF b > 0 and b < MEMMAX and c > 0 and c < MEMMAX THEN
+                LINE(x1,y1)-(x2,y2),7
+                IF d > 0  and d < MEMMAX THEN        
+                    x3 = CENTRE.X+POINTS(d,0)
+                    y3 = CENTRE.Y-POINTS(d,1)
+                    LINE(x2,y2)-(x3,y3),7
+                    LINE(x3,y3)-(x1,y1),7
+                ENDIF
+            ENDIF
+        ENDIF
+    LOOP UNTIL EOF(#3) <> 0
+    CLOSE #3
+    CLEAR
+END SUB
+    
+'REFORMAT
+'PROCVERTEX
+'DRAWLINE
+'KILL "OUTPUT.TMP"
+'END

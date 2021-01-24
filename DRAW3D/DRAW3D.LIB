@@ -3,7 +3,9 @@ SUB READFILE
     Input "ENTER .OBJ FILE: ",FILENAME$
     INLINE$ = ""
     COUNTPOINTSLINES(FILENAME$)
-    Open FILENAME$ For INPUT As #3
+    Open FILENAME$ For RANDOM As #3
+    FILESIZE = POS(#3)
+    SEEK #3,1
     POINTCNT = 0
     LINECNT = 0
     DO WHILE EOF(#3) = 0
@@ -19,6 +21,9 @@ SUB READFILE
     CLOSE #3
     NORMALISE
 END SUB
+
+SUB PROGRESS(POSITION,TOTAL)
+    PERCENT = TOTAL/100*POSITION
 
 SUB COUNTPOINTSLINES(FILENAME2$)
     POINTS = 0
@@ -56,6 +61,9 @@ SUB READLINES(INLINE2$,LINE2)
     i = 2
     FOR j = 0 TO 2
         LINES(LINE2,j) = VAL(WORD$(INLINE2$,i))
+            IF LINES(LINE2,j) > 0 THEN
+                LINES(LINE2,j) = LINES(LINE2,j)-1
+            ENDIF
         i = i + LEN(WORD$(INLINE2$,i))
     NEXT
 END SUB
@@ -133,49 +141,42 @@ SUB NORMALISE
     NEXT
 END SUB
 
-SUB SENDLINES
-    CLS
-    FOR n = 0 TO LINES - 1
-        h = POINTS(LINES(n,0),0)
-        i = POINTS(LINES(n,0),1)
-        j = POINTS(LINES(n,0),2)
-        k = POINTS(LINES(n,1),0)
-        l = POINTS(LINES(n,1),1)
-        m = POINTS(LINES(n,1),2)
-        DRAWLINE(h,i,j,k,l,m)
-        IF LINES(n,2) > 0 THEN
-            h = POINTS(LINES(n,1),0)
-            i = POINTS(LINES(n,1),1)
-            j = POINTS(LINES(n,1),2)
-            k = POINTS(LINES(n,2),0)
-            l = POINTS(LINES(n,2),1)
-            m = POINTS(LINES(n,2),2)
-            DRAWLINE(h,i,j,k,l,m)
-        ENDIF
-    NEXT
-END SUB
+Function FOV(COORD1,COORD2)
+    DISTANCE = 240
+    ANGLE = Deg(Atn(COORD1 / (DISTANCE + COORD2)))
+    FOV = (Tan(Rad(ANGLE)) * DISTANCE)
+End Function
 
-SUB DRAWLINE(b,c,d,e,f,g,MAGX,XOFFSET,YOFFSET,ZOFFSET)
+SUB DRAWLINE(MAGX,XOFFSET,YOFFSET,ZOFFSET)
+    LOCAL CURRENT(6)
     CENTRE.X = MM.HRES/2
     CENTRE.Y = MM.VRES/2
     IF MAGX = 0 THEN
         MAGX = 150
     ENDIF
-    b = b * MAGX
-    c = c * MAGX
-    d = d * MAGX
-    e = e * MAGX
-    f = f * MAGX
-    g = g * MAGX
-    ANGLE=DEG(ATN((b+XOFFSET)/(240-d+ZOFFSET)))
-    b = (TAN(RAD(ANGLE))*240)
-    ANGLE=DEG(ATN((c+YOFFSET)/(240-d+ZOFFSET)))
-    c = (TAN(RAD(ANGLE))*240)
-    ANGLE=DEG(ATN((e+XOFFSET)/(240-g+ZOFFSET)))
-    e = (TAN(RAD(ANGLE))*240)
-    ANGLE=DEG(ATN((f+YOFFSET)/(240-g+ZOFFSET)))
-    f = (TAN(RAD(ANGLE))*240)
-    LINE(CENTRE.X+b,CENTRE.Y-c)-(CENTRE.X+e,CENTRE.Y-f)
+    CLS
+    FOR i = 0 TO LINES - 1
+        FOR j = 0 TO 2
+            CURRENT(j) = POINTS(LINES(i,0),j) * MAGX
+            CURRENT(j+3) = POINTS(LINES(i,1),j) * MAGX
+        NEXT
+        x1 = CENTRE.X+FOV(CURRENT(0)+XOFFSET,-CURRENT(2)+ZOFFSET)
+        y1 = CENTRE.Y-FOV(CURRENT(1)+YOFFSET,-CURRENT(2)+ZOFFSET)
+        x2 = CENTRE.X+FOV(CURRENT(3)+XOFFSET,-CURRENT(5)+ZOFFSET)
+        y2 = CENTRE.Y-FOV(CURRENT(4)+YOFFSET,-CURRENT(5)+ZOFFSET)
+        LINE(x1,y1)-(x2,y2)
+        IF LINES(i,2) > 0 THEN
+            FOR j = 0 TO 2
+                CURRENT(i) = POINTS(LINES(j,1),i) * MAGX
+                CURRENT(i+3) = POINTS(LINES(j,2),i) * MAGX
+            NEXT
+            x1 = CENTRE.X+FOV(CURRENT(0)+XOFFSET,-CURRENT(2)+ZOFFSET)
+            y1 = CENTRE.Y-FOV(CURRENT(1)+YOFFSET,-CURRENT(2)+ZOFFSET)
+            x2 = CENTRE.X+FOV(CURRENT(3)+XOFFSET,-CURRENT(5)+ZOFFSET)
+            y2 = CENTRE.Y-FOV(CURRENT(4)+YOFFSET,-CURRENT(5)+ZOFFSET)
+            LINE(x1,y1)-(x2,y2)
+        ENDIF
+    NEXT
 END SUB
 
 Sub KEYPRESS
@@ -183,22 +184,22 @@ Sub KEYPRESS
     If KEYPRESS$ <> "" Then
         If KEYPRESS$ = "q" Then
             ROTATE("ZMINUS")
-            SENDLINES
+            DRAWLINE()
         ElseIf KEYPRESS$ = "e" Then
             ROTATE("ZPLUS")
-            SENDLINES
+            DRAWLINE()
         ElseIf KEYPRESS$ = "w" Then
             ROTATE("XMINUS")
-            SENDLINES
+            DRAWLINE()
         ElseIf KEYPRESS$ = "s" Then
             ROTATE("XPLUS")
-            SENDLINES
+            DRAWLINE()
         ElseIf KEYPRESS$ = "a" Then
             ROTATE("YMINUS")
-            SENDLINES
+            DRAWLINE()
         ElseIf KEYPRESS$ = "d" Then
             ROTATE("YPLUS")
-            SENDLINES
+            DRAWLINE()
         EndIf
     EndIf
 End Sub
