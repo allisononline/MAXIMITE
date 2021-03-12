@@ -1,0 +1,1 @@
+Print MM.CmdLine$

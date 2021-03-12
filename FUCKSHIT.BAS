@@ -2,7 +2,7 @@
 6  Rem COPYRIGHT (C) 1984, 2016
 7  Rem  BY ZORIN THE LYNX
 10 For T = 20 To 150
-20 Poke RVIDEO,33,T
+20 Poke 1,33,T
 30 For U = 1 To T
 40 Print "#";
 50 Next U

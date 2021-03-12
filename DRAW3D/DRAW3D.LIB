@@ -10,6 +10,8 @@ SUB READFILE
     SEEK #3,1
     POINTCNT = 0
     LINECNT = 0
+    PRINT ""
+    PRINT "LOADING POINTS & LINES"
     DO WHILE EOF(#3) = 0
         LINE INPUT #3,INLINE$
         IF WORD$(INLINE$,1) = "v" THEN
@@ -18,7 +20,7 @@ SUB READFILE
             NEXT
             POINTCNT = POINTCNT + 1
         ELSEIF WORD$(INLINE$,1) = "f" OR WORD$(INLINE$,1) = "l" THEN
-             FOR f = 0 TO 2
+            FOR f = 0 TO 2
                 LINES(LINECNT,f) = VAL(WORD$(INLINE$,f+2))
             NEXT           
             LINECNT = LINECNT + 1
@@ -109,6 +111,7 @@ SUB COUNTPOINTSLINES(FILENAME2$)
     POINTS = 0
     LINES = 0
     Open FILENAME2$ For INPUT As #3
+    PRINT "COUNTING POINTS & LINES"
     DO WHILE EOF(#3) = 0
         Line Input #3,INLINE$
         IF WORD$(INLINE$,1) = "v" THEN
@@ -116,6 +119,7 @@ SUB COUNTPOINTSLINES(FILENAME2$)
         ELSEIF WORD$(INLINE$,1) = "f" OR WORD$(INLINE$,1) = "l" THEN
             LINES = LINES + 1
         ENDIF
+        PROGRESS(LOF(#3),LOC(#3))
     LOOP
     CLOSE #3
 END SUB
@@ -134,28 +138,34 @@ SUB INITLINES(NUMLINES)
     DIM LINES(NUMLINES,3)
 END SUB
 
-FUNCTION WORD$(INLINE3$,START,NOSPC)
-    IF START < 1 THEN
-        START = 1
+FUNCTION WORD$(INLINE3$,WORDNUM)
+    IF WORDNUM < 1 THEN
+        WORDNUM = 1
     ENDIF
     LOCAL k = 0
     WORD$ = ""
-    DO WHILE MID$(INLINE3$,START+k,1) = " "
-        k = k + 1
-        IF NOSPC <> 0 THEN
-            START = START + 1
-        ENDIF
-    LOOP
-    DO WHILE MID$(INLINE3$,START+k,1) <> " " AND (START+k) =< LEN(INLINE3$)
-        k = k + 1
-    LOOP 
+    START = 1
+    FOR i = 1 TO WORDNUM
+        START = START + k
+        k = 0
+        DO WHILE MID$(INLINE3$,START+k,1) = " "
+            k = k + 1
+        LOOP
+        START = START + k
+        k = 0
+        DO WHILE MID$(INLINE3$,START+k,1) <> " " AND  START+k =< LEN(INLINE3$)
+            k = k + 1
+        LOOP
+    NEXT
     IF k > 0 THEN
         WORD$ = MID$(INLINE3$,START,k)
     ENDIF
 END FUNCTION
 
-Sub ROTATE(DIR$)
-    INCRE = 15
+Sub ROTATE(DIR$,INCRE)
+    IF INCRE = 0 THEN
+        INCRE = 15
+    ENDIF
     For i = 0 To POINTS - 1
         If DIR$ = "ZMINUS" Then
             x = (POINTS(i, 0) * Cos(Rad(INCRE))) - (POINTS(i, 1) * Sin(Rad(INCRE)))
@@ -207,6 +217,26 @@ SUB NORMALISE
     NEXT
 END SUB
 
+SUB CENTREIZE
+    HIGHEST = 0
+    LOWEST = 0
+    RANGE = 0
+    FOR j = 0 TO 2
+        FOR i = 0 TO POINTS - 1
+            IF POINTS(i,j) > HIGHEST THEN
+                HIGHEST = POINTS(i,j)
+            ENDIF
+            IF POINTS(i,j) < LOWEST THEN
+                LOWEST = POINTS(i,j)
+            ENDIF
+        NEXT
+        RANGE = HIGHEST - LOWEST
+        FOR i = 0 TO POINTS - 1
+            POINTS(i,j) = POINTS(i,j) - (RANGE/2)
+        NEXT
+    NEXT
+END SUB
+
 Function FOV(COORD1,COORD2)
     DISTANCE = 240
     ANGLE = Atn(COORD1 / (DISTANCE + COORD2))
@@ -220,11 +250,10 @@ SUB DRAWLINE(MAGX,XOFFSET,YOFFSET,ZOFFSET)
     IF MAGX = 0 THEN
         MAGX = 150
     ENDIF
-    CLS
     FOR i = 0 TO LINES - 1
         FOR j = 0 TO 2
-            CURRENT(j) = POINTS(LINES(i,0),j) * MAGX
-            CURRENT(j+3) = POINTS(LINES(i,1),j) * MAGX
+            CURRENT(j) = POINTS(LINES(i,0)-1,j) * MAGX
+            CURRENT(j+3) = POINTS(LINES(i,1)-1,j) * MAGX
         NEXT
         x1 = CENTRE.X+FOV(CURRENT(0)+XOFFSET,-CURRENT(2)+ZOFFSET)
         y1 = CENTRE.Y-FOV(CURRENT(1)+YOFFSET,-CURRENT(2)+ZOFFSET)
@@ -233,8 +262,8 @@ SUB DRAWLINE(MAGX,XOFFSET,YOFFSET,ZOFFSET)
         LINE(x1,y1)-(x2,y2)
         IF LINES(i,2) > 0 THEN
             FOR j = 0 TO 2
-                CURRENT(i) = POINTS(LINES(j,1),i) * MAGX
-                CURRENT(i+3) = POINTS(LINES(j,2),i) * MAGX
+                CURRENT(j) = POINTS(LINES(i,1)-1,j) * MAGX
+                CURRENT(j+3) = POINTS(LINES(i,2)-1,j) * MAGX
             NEXT
             x1 = CENTRE.X+FOV(CURRENT(0)+XOFFSET,-CURRENT(2)+ZOFFSET)
             y1 = CENTRE.Y-FOV(CURRENT(1)+YOFFSET,-CURRENT(2)+ZOFFSET)
@@ -250,28 +279,52 @@ Sub KEYPRESS
     If KEYPRESS$ <> "" Then
         If KEYPRESS$ = "q" Then
             ROTATE("ZMINUS")
+            CLS
             DRAWLINE()
         ElseIf KEYPRESS$ = "e" Then
             ROTATE("ZPLUS")
+            CLS
             DRAWLINE()
         ElseIf KEYPRESS$ = "w" Then
             ROTATE("XMINUS")
+            CLS
             DRAWLINE()
         ElseIf KEYPRESS$ = "s" Then
             ROTATE("XPLUS")
+            CLS
             DRAWLINE()
         ElseIf KEYPRESS$ = "a" Then
             ROTATE("YMINUS")
+            CLS
             DRAWLINE()
         ElseIf KEYPRESS$ = "d" Then
             ROTATE("YPLUS")
+            CLS
             DRAWLINE()
         EndIf
     EndIf
 End Sub
+
+SUB SPHERIFY
+    FOR i = 0 TO POINTS - 1
+        L = SQR(ABS(POINTS(i,0))+ABS(POINTS(i,1))+ABS(POINTS(i,2)))
+        FOR j = 0 TO 2
+            POINTS(i,j) = POINTS(i,j) * (1/L)
+        NEXT
+    NEXT
+END SUB
+
+SUB ROUND
+    DO
+        CLS
+        DRAWLINE
+        SPHERIFY
+    LOOP
+END SUB
 
 SUB DEMO
     DO
         KEYPRESS
     LOOP
 END SUB
+
