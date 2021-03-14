@@ -1,5 +1,5 @@
 Debug = 1
-Sub Debug(Msg$)
+Sub DebugMsg(Msg$)
     If Debug = 1 Then
         Print Msg$
     EndIf
@@ -20,12 +20,28 @@ PowerOnReset = &HFFFC
 BreakRequest = &HFFFE
 
 Instruction$ = "   "
-AddressType$ = "   "
+Address$ = "   "
+
+Sub LoadProgram
+    Input "Enter program file: ",Filename$
+    Input "Enter offset: ",offset
+    Open Filename$ For Random As #4
+    Seek #3,offset+1
+    Seek #4,1
+    For i = 1 To LOF(#4)
+        Print #3,Input$(1,#4);
+    Next
+    Close #4
+End Sub
 
 Sub Initialise
     Open "M6502MEM.BIN" For Random As #3
+    Seek #3,1
+    For i = 0 To &HFFFF
+        Print #3,Chr$(00);
+    Next
     StackPointer = &HFF
-    ProgramCounter = 0
+    ProgramCounter = &H0000
 End Sub
 
 Sub Cycle
@@ -33,7 +49,7 @@ Sub Cycle
     GetAddress
     GetData
     Execute
-    Debug(Instruction$)
+    DebugMsg(Instruction$)
 End Sub
 
 Function Fetch()
@@ -42,137 +58,137 @@ Function Fetch()
 End Function
 
 Sub Decode(OpCode)
-    Group = OpCode AND &B11
-    AddressType = (OpCode AND &B11100)/&B100
-    Instruction = (OpCode AND &B11100000)/&B100000
+    Group = OpCode And &B11
+    AddressType = (OpCode And &B11100)/&B100
+    InstructionType= (OpCode And &B11100000)/&B100000
     If Group = &B01 Then
-        If Instruction = &B000 Then
+        If InstructionType= &B000 Then
             Instruction$ = "ORA"
-        ElseIf Instruction = &B001 Then
+        ElseIf InstructionType= &B001 Then
                Instruction$ = "AND"
-        ElseIf Instruction = &B010 Then
+        ElseIf InstructionType= &B010 Then
                Instruction$ = "EOR"
-        ElseIf Instruction = &B011 Then
+        ElseIf InstructionType= &B011 Then
                Instruction$ = "ADC"
-        ElseIf Instruction = &B100 Then
+        ElseIf InstructionType= &B100 Then
                Instruction$ = "STA"
-        ElseIf Instruction = &B101 Then
+        ElseIf InstructionType= &B101 Then
                Instruction$ = "LDA"
-        ElseIf Instruction = &B110 Then
+        ElseIf InstructionType= &B110 Then
                Instruction$ = "CMP"
-        ElseIf Instruction = &B111 Then
+        ElseIf InstructionType= &B111 Then
                Instruction$ = "SBC"
         EndIf
         If AddressType = &B000 Then
-            AddressType$ = "(zp,x)"
+            Address$ = "(zp,x)"
         ElseIf AddressType = &B001 Then
-            AddressType$ = "zp"
+            Address$ = "zp"
         ElseIf AddressType = &B010 Then
-            AddressType$ = "#"
+            Address$ = "#"
         ElseIf AddressType = &B011 Then
-            AddressType$ = "a"
+            Address$ = "a"
         ElseIf AddressType = &B100 Then
-            AddressType$ = "(zp),y"
+            Address$ = "(zp),y"
         ElseIf AddressType = &B101 Then
-            AddressType$ = "zp,x"
+            Address$ = "zp,x"
         ElseIf AddressType = &B110 Then
-            AddressType$ = "a,y"
+            Address$ = "a,y"
         ElseIf AddressType = &B001 Then
-            AddressType$ = "a,x"
+            Address$ = "a,x"
         EndIf
     ElseIf Group = &B10 Then
-        If Instruction = &B000 Then
+        If InstructionType = &B000 Then
                Instruction$ = "ASL"
-        ElseIf Instruction = &B001 Then
+        ElseIf InstructionType = &B001 Then
                Instruction$ = "ROL"
-        ElseIf Instruction = &B010 Then
+        ElseIf InstructionType = &B010 Then
                Instruction$ = "LSR"
-        ElseIf Instruction = &B011 Then
+        ElseIf InstructionType = &B011 Then
                Instruction$ = "ROR"
-        ElseIf Instruction = &B100 Then
+        ElseIf InstructionType = &B100 Then
                Instruction$ = "STX"
-        ElseIf Instruction = &B101 Then
+        ElseIf InstructionType = &B101 Then
                Instruction$ = "LDX"
-        ElseIf Instruction = &B110 Then
+        ElseIf InstructionType = &B110 Then
                Instruction$ = "DEC"
-        ElseIf Instruction = &B111 Then
+        ElseIf InstructionType = &B111 Then
                Instruction$ = "INC"
         EndIf
         If AddressType = &B000 Then
-            AddressType$ = "#"
+            Address$ = "#"
         ElseIf AddressType = &B001 Then
-            AddressType$ = "zp"
+            Address$ = "zp"
         ElseIf AddressType = &B010 Then
-            AddressType$ = "A"
+            Address$ = "A"
         ElseIf AddressType = &B011 Then
-            AddressType$ = "a"
+            Address$ = "a"
         ElseIf AddressType = &B101 Then
-            AddressType$ = "zp,x"
+            Address$ = "zp,x"
         ElseIf AddressType = &B111 Then
-            AddressType$ = "a,x"
+            Address$ = "a,x"
         EndIf
     ElseIf Group = &B00 Then
-        If Instruction = &B001 Then
+        If InstructionType = &B001 Then
             Instruction$ = "BIT"
-        ElseIf Instruction = &B010 THen
+        ElseIf InstructionType = &B010 Then
             Instruction$ = "JMP"
-        ElseIf Instruction = &B011 THen
+        ElseIf InstructionType= &B011 Then
             Instruction$ = "JMP"
-        ElseIf Instruction = &B100 THen
+        ElseIf InstructionType= &B100 Then
             Instruction$ = "STY"
-        ElseIf Instruction = &B101 THen
+        ElseIf InstructionType= &B101 Then
             Instruction$ = "LDY"
-        ElseIf Instruction = &B110 THen
+        ElseIf InstructionType= &B110 Then
             Instruction$ = "CPY"
-        ElseIf Instruction = &B111 THen
+        ElseIf InstructionType= &B111 Then
             Instruction$ = "CPX"
         EndIf
         If AddressType = &B000 Then
-            AddressType$ = "#"
+            Address$ = "#"
         ElseIf AddressType = &B001 Then
-            AddressType$ = "zp"
+            Address$ = "zp"
         ElseIf AddressType = &B011 Then
-            AddressType$ = "a"
+            Address$ = "a"
         ElseIf AddressType = &B101 Then
-            AddressType$ = "zp,x"
+            Address$ = "zp,x"
         ElseIf AddressType = &B111 Then
-            AddressType$ = "a,x"
+            Address$ = "a,x"
         EndIf
     EndIf
 End Sub
 
 Sub GetAddress
-    If AddressType$ = "a" Then
+    If Address$ = "a" Then
         LoByte = Fetch()
         HiByte = Fetch()
         MemoryAddress = (HiByte*&H100)+LoByte
-    ElseIf AddressType$ = "zp" Then
+    ElseIf Address$ = "zp" Then
         MemoryAddress = Fetch()
-    ElseIf AddressType$ = "r" Then
+    ElseIf Address$ = "r" Then
         Offset = Fetch()
         MemoryAddress = ProgramCounter + Offset
-    ElseIf AddressType$ = "(a)" Then
+    ElseIf Address$ = "(a)" Then
         LoByte = Fetch()
         HiByte = Fetch()
         MemoryAddress = (HiByte*&H100)+LoByte
-    ElseIf AddressType$ = "a,x" Then
+    ElseIf Address$ = "a,x" Then
         LoByte = Fetch()
         HiByte = Fetch()
         MemoryAddress = (HiByte*&H100)+LoByte+RegisterX
-    ElseIf AddressType$ = "a,y" Then
+    ElseIf Address$ = "a,y" Then
         LoByte = Fetch()
         HiByte = Fetch()
         MemoryAddress = (HiByte*&H100)+LoByte+RegisterY
-    ElseIf AddressType$ = "zp,x" Then
+    ElseIf Address$ = "zp,x" Then
         MemoryAddress = Fetch()+RegisterX
-    ElseIf AddressType$ = "zp,y" Then
+    ElseIf Address$ = "zp,y" Then
         MemoryAddress = Fetch()+RegisterY
-    ElseIf AddressType$ = "(zp,x)" Then
+    ElseIf Address$ = "(zp,x)" Then
         MemoryAddress = Fetch()+RegisterX
         LoByte = ReadMemory(MemoryAddress)
         HiByte = ReadMemory(MemoryAddress+1)
         MemoryAddress = (HiByte*&H100)+LoByte
-    ElseIf AddressType$ = "(zp),y" Then
+    ElseIf Address$ = "(zp),y" Then
         MemoryAddress = Fetch()
         LoByte = ReadMemory(MemoryAddress)
         HiByte = ReadMemory(MemoryAddress+1)
@@ -181,9 +197,9 @@ Sub GetAddress
 End Sub
 
 Sub GetData
-    If AddressType$ = "A" Then
+    If Address$ = "A" Then
         Byte = Accumulator
-    ElseIf AddressType$ = "#" Then
+    ElseIf Address$ = "#" Then
         Byte = Fetch()
     Else
         Byte = ReadMemory(MemoryAddress)
@@ -200,12 +216,12 @@ Sub Execute
         EndIf
         SetNumberFlags(Accumulator)
     ElseIf Instruction$ = "AND" Then
-        Accumulator = Accumulator AND Byte
+        Accumulator = Accumulator And Byte
         SetNumberFlags(Accumulator)
     ElseIf Instruction$ = "ASL" Then
-        WriteStatus("Carry",(Byte AND &H80)/&H80)
+        WriteStatus("Carry",(Byte And &H80)/&H80)
         Byte = (Byte*&B10) Mod(256)
-        If AddressType$ = "A" Then
+        If Address$ = "A" Then
             Accumulator = Byte
         Else
             WriteMemory(MemoryAddress,Byte)
@@ -223,13 +239,13 @@ Sub Execute
             ProgramCounter = ProgramCounter + Byte
         EndIf
     ElseIf Instruction$ = "BIT" Then
-        If Accumulator AND Byte = 0 Then
+        If Accumulator And Byte = 0 Then
             WriteStatus("Zero",1)
         Else
             WriteStatus("Zero",0)
         EndIf
-        WriteStatus("Overflow",Byte AND &B100000)
-        WriteStatus("Negative",Byte AND &B1000000)
+        WriteStatus("Overflow",Byte And &B100000)
+        WriteStatus("Negative",Byte And &B1000000)
     ElseIf Instruction$ = "BMI" Then
         If ReadStatus("Negative") = 1 Then
             ProgramCounter = ProgramCounter + Byte
@@ -271,7 +287,7 @@ Sub Execute
         If Accumulator = Byte Then
             WriteStatus("Zero")
         EndIf
-        WriteStatus("Negative",(Byte AND &H80))
+        WriteStatus("Negative",(Byte And &H80))
     ElseIf Instruction$ = "CPX" Then
         If RegisterX >= Byte Then
             WriteStatus("Carry",1)
@@ -279,7 +295,7 @@ Sub Execute
         If RegisterX = Byte Then
             WriteStatus("Zero",1)
         EndIf
-        WriteStatus("Negative",(Byte AND &H80))
+        WriteStatus("Negative",(Byte And &H80))
     ElseIf Instruction$ = "CPY" Then
         If RegisterY >= Byte Then
             WriteStatus("Carry",1)
@@ -287,7 +303,7 @@ Sub Execute
         If RegisterY = Byte Then
             WriteStatus("Zero",1)
         EndIf
-        WriteStatus("Negative",(Byte AND &H80))
+        WriteStatus("Negative",(Byte And &H80))
     ElseIf Instruction$ = "DEC" Then
         Byte = EightBit(Byte-1)
         SetNumberFlags(Byte)
@@ -299,7 +315,7 @@ Sub Execute
         RegisterY = EightBit(RegisterY-1)
         SetNumberFlags(RegisterY)
     ElseIf Instruction$ = "EOR" Then
-        Accumulator = Accumulator XOR Byte
+        Accumulator = Accumulator Xor Byte
         SetNumberFlags(Accumulator)
     ElseIf Instruction$ = "INC" Then
         Byte = EightBit(Byte+1)
@@ -312,7 +328,7 @@ Sub Execute
         RegisterY = EightBit(RegisterY+1)
         SetNumberFlags(RegisterY)
     ElseIf Instruction$ = "JMP" Then
-        ProgramCounter = Byte
+        ProgramCounter = MemoryAddress
     ElseIf Instruction$ = "JSR" Then
         PushStack(ProgramCounter+2)
         ProgramCounter = Byte
@@ -326,14 +342,14 @@ Sub Execute
         RegisterY = Byte
         SetNumberFlags(RegisterY)
     ElseIf Instruction$ = "LSR" Then
-        WriteStatus("Carry",Byte AND 1)
-        LogicalShiftRight = FIX(Byte/2)
+        WriteStatus("Carry",Byte And 1)
+        LogicalShiftRight = Fix(Byte/2)
         SetNumberFlags(LogicalShiftRight)
     ElseIf Instruction$ = "NOP" Then
         Do While 1 < 0
         Loop
     ElseIf Instruction$ = "ORA" Then
-        Accumulator = Accumulator OR Byte
+        Accumulator = Accumulator Or Byte
         SetNumberFlags(Accumulator)
     ElseIf Instruction$ = "PHA" Then
         PushStack(Accumulator)
@@ -344,21 +360,21 @@ Sub Execute
     ElseIf Instruction$ = "PLP" Then
         StatusRegister = PullStack
     ElseIf Instruction$ = "ROL" Then
-        OldBit = Byte AND &H80
+        OldBit = Byte And &H80
         Byte = EightBit(Byte*2) + ReadStatus("Carry")
         WriteStatus("Carry",OldBit)
         SetNumberFlags(Byte)
-        If AddressType$ = "A" Then
+        If Address$ = "A" Then
             Accumulator = Byte
         Else
             WriteMemory(MemoryAddress,Byte)
         EndIf
     ElseIf Instruction$ = "ROR" Then
-        OldBit = Byte AND &H1
-        Byte = EightBit(FIX(Byte/2)) + (ReadStatus("Carry")*&H80)
+        OldBit = Byte And &H1
+        Byte = EightBit(Fix(Byte/2)) + (ReadStatus("Carry")*&H80)
         WriteStatus("Carry",OldBit)
         SetNumberFlags(Byte)
-        If AddressType$ = "A" Then
+        If Address$ = "A" Then
             Accumulator = Byte
         Else
             WriteMemory(MemoryAddress,Byte)
@@ -406,7 +422,7 @@ Sub Execute
         Accumulator = RegisterY
     EndIf
 End Sub
-        
+
 Sub PushStack
     WriteMemory(StackAddress+StackPointer)
     StackPointer = StackPointer - 1
@@ -428,7 +444,7 @@ Sub SetNumberFlags(Number)
     If Number = 0 Then
         WriteStatus("Zero",1)
     EndIf
-    WriteStatus("Negative",Number AND &H80)
+    WriteStatus("Negative",Number And &H80)
 End Sub
 
 Function ReadStatus(Flag$)
@@ -448,7 +464,7 @@ Function ReadStatus(Flag$)
         Bit = 0
     EndIf
     Mask = 2^Bit
-    If StatusRegister AND Mask <> 0 Then
+    If StatusRegister And Mask <> 0 Then
         ReadStatus = 1
     Else
         ReadStatus = 0
@@ -473,24 +489,24 @@ Sub WriteStatus(Flag$,status)
     EndIf
     Mask = 2^Bit
     If status <> 0 Then
-        StatusRegister = StatusRegister OR Mask
+        StatusRegister = StatusRegister Or Mask
     Else
-        StatusRegister = StatusRegister AND (NOT Mask)
+        StatusRegister = StatusRegister And (Not Mask)
     EndIf
 End Sub
 
 Function ReadMemory(Address)
     Seek #3, Address + 1
-    ReadMemory = ASC(INPUT$(1,#3))
+    ReadMemory = Asc(Input$(1,#3))
 End Function
 
 Sub WriteMemory(Address,Byte)
     Seek #3, Address + 1
-    Print #3, CHR$(Byte);
+    Print #3, Chr$(Byte);
 End Sub
 
 Sub StatusDisplay
-    Print @(0,0)"Negative: ";
+    Print "Negative: ";
     Print ReadStatus("Negative");
     Print " Overflow: ";
     Print ReadStatus("Overflow");
@@ -516,10 +532,11 @@ Function Padding$(InString$,Number)
 End Function
 
 Initialise
+LoadProgram
 Do
     Cycle
     StatusDisplay
-    Print "Address &H8000: ";
-    Print ReadMemory(&H8000)
+    Print "Address &HE000: ";
+    Print ReadMemory(&HE000)
     Pause 500
 Loop
