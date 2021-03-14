@@ -721,7 +721,6 @@ Function PeekMemory(Address)
     PeekMemory = ASC(INPUT$(1,#3))
 End Function
 
-
 Initialise
 Do
     Cycle
