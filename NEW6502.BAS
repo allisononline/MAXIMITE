@@ -331,7 +331,7 @@ Sub Execute
         ProgramCounter = MemoryAddress
     ElseIf Instruction$ = "JSR" Then
         PushStack(ProgramCounter+2)
-        ProgramCounter = Byte
+        ProgramCounter = MemoryAddress
     ElseIf Instruction$ = "LDA" Then
         Accumulator = Byte
         SetNumberFlags(Accumulator)
