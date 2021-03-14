@@ -1,0 +1,1210 @@
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 4030        
+Data: 78        
+Program Counter: 4031        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 4030        
+Data: 78        
+Program Counter: 4032        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 4030        
+Data: 78        
+Program Counter: 4033        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BPL
+Memory Address: 40C2        
+Data: 29        
+Program Counter: 405E        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BPL
+Memory Address: 4071        
+Data: A9        
+Program Counter: 4109        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BPL
+Memory Address: 410E        
+Data: AD        
+Program Counter: 41B8        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BPL
+Memory Address: 4283        
+Data: D0        
+Program Counter: 428A        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BEQ
+Memory Address: 42A6        
+Data: AD        
+Program Counter: 428C        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BEQ
+Memory Address: 4330        
+Data: 8D        
+Program Counter: 428E        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BEQ
+Memory Address: 4360        
+Data: AD        
+Program Counter: 4290        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BEQ
+Memory Address: 431F        
+Data: EE        
+Program Counter: 4292        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BEQ
+Memory Address: 429B        
+Data: 82        
+Program Counter: 4294        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: JSR
+Memory Address: 6B83        
+Data: AC        
+Program Counter: 4296        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: JSR
+Memory Address: B060        
+Data: 98        
+Program Counter: 4298        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: RTS
+Memory Address: B060        
+Data: 98        
+Program Counter: 0001        
+Stack Pointer: 0101        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: 98        
+Program Counter: 0000        
+Stack Pointer: 00FE        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: 00        
+Program Counter: 0000        
+Stack Pointer: 00FB        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: 00        
+Program Counter: 0000        
+Stack Pointer: 00F8        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: 00        
+Program Counter: 0000        
+Stack Pointer: 00F5        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 4030        
+Data: 78        
+Program Counter: 4031        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 4030        
+Data: 78        
+Program Counter: 4032        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 4030        
+Data: 78        
+Program Counter: 4033        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BPL
+Memory Address: 40C2        
+Data: 29        
+Program Counter: 405E        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BPL
+Memory Address: 4071        
+Data: A9        
+Program Counter: 4109        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BPL
+Memory Address: 410E        
+Data: AD        
+Program Counter: 41B8        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BPL
+Memory Address: 4283        
+Data: D0        
+Program Counter: 428A        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BEQ
+Memory Address: 42A6        
+Data: AD        
+Program Counter: 428C        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BEQ
+Memory Address: 4330        
+Data: 8D        
+Program Counter: 428E        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BEQ
+Memory Address: 4360        
+Data: AD        
+Program Counter: 4290        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BEQ
+Memory Address: 431F        
+Data: EE        
+Program Counter: 4292        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BEQ
+Memory Address: 429B        
+Data: 82        
+Program Counter: 4294        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: JSR
+Memory Address: 6B83        
+Data: AC        
+Program Counter: 6B83        
+Stack Pointer: 00FD        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: JSR
+Memory Address: 00E9        
+Data: 00        
+Program Counter: 00E9        
+Stack Pointer: 00FB        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: 00        
+Program Counter: 0000        
+Stack Pointer: 00F8        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: 00        
+Program Counter: 0000        
+Stack Pointer: 00F5        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: 00        
+Program Counter: 0000        
+Stack Pointer: 00F2        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: 00        
+Program Counter: 0000        
+Stack Pointer: 00EF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: 00        
+Program Counter: 0000        
+Stack Pointer: 00EC        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: 00        
+Program Counter: 0000        
+Stack Pointer: 00E9        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: 00        
+Program Counter: 0000        
+Stack Pointer: 00E6        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: 00        
+Program Counter: 0000        
+Stack Pointer: 00E3        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: 00        
+Program Counter: 0000        
+Stack Pointer: 00E0        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: 00        
+Program Counter: 0000        
+Stack Pointer: 00DD        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: 00        
+Program Counter: 0000        
+Stack Pointer: 00DA        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: 00        
+Program Counter: 0000        
+Stack Pointer: 00D7        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0000        
+Data: 00        
+Program Counter: 0000        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0000        
+Data: A9        
+Program Counter: 0001        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0000        
+Data: A9        
+Program Counter: 0002        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0000        
+Data: A9        
+Program Counter: 0003        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0000        
+Data: A9        
+Program Counter: 0004        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0093        
+Data: 00        
+Program Counter: 0006        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0088        
+Data: 00        
+Program Counter: 0008        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0010        
+Data: 01        
+Program Counter: 000A        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 000C        
+Data: 80        
+Program Counter: 000C        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 00B7        
+Data: 00        
+Program Counter: 000E        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 009D        
+Data: 00        
+Program Counter: 0010        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0092        
+Data: 00        
+Program Counter: 0012        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 001B        
+Data: 80        
+Program Counter: 0014        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0016        
+Data: 80        
+Program Counter: 0016        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 00C1        
+Data: 00        
+Program Counter: 0018        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 00A7        
+Data: 00        
+Program Counter: 001A        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: 00        
+Program Counter: 0000        
+Stack Pointer: 00FC        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: A9        
+Program Counter: 0000        
+Stack Pointer: 00F9        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: A9        
+Program Counter: 0000        
+Stack Pointer: 00F6        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: A9        
+Program Counter: 0000        
+Stack Pointer: 00F3        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0000        
+Data: A9        
+Program Counter: 0001        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0000        
+Data: A9        
+Program Counter: 0002        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0000        
+Data: A9        
+Program Counter: 0003        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0000        
+Data: A9        
+Program Counter: 0004        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0093        
+Data: 00        
+Program Counter: 0006        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0088        
+Data: 00        
+Program Counter: 0008        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0010        
+Data: 01        
+Program Counter: 000A        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 000C        
+Data: 80        
+Program Counter: 000C        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 00B7        
+Data: 00        
+Program Counter: 000E        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 009D        
+Data: 00        
+Program Counter: 0010        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0092        
+Data: 00        
+Program Counter: 0012        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 001B        
+Data: 80        
+Program Counter: 0014        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0016        
+Data: 80        
+Program Counter: 0016        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 00C1        
+Data: 00        
+Program Counter: 0018        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 00A7        
+Data: 00        
+Program Counter: 001A        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: 00        
+Program Counter: 0000        
+Stack Pointer: 00FC        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: A9        
+Program Counter: 0000        
+Stack Pointer: 00F9        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: A9        
+Program Counter: 0000        
+Stack Pointer: 00F6        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: A9        
+Program Counter: 0000        
+Stack Pointer: 00F3        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: A9        
+Program Counter: 0000        
+Stack Pointer: 00F0        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: A9        
+Program Counter: 0000        
+Stack Pointer: 00ED        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0000        
+Data: A9        
+Program Counter: 0001        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0000        
+Data: A9        
+Program Counter: 0002        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0000        
+Data: A9        
+Program Counter: 0003        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0000        
+Data: A9        
+Program Counter: 0004        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0093        
+Data: 00        
+Program Counter: 0006        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0088        
+Data: 00        
+Program Counter: 0008        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0010        
+Data: 01        
+Program Counter: 000A        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 000C        
+Data: 80        
+Program Counter: 000C        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 00B7        
+Data: 00        
+Program Counter: 000E        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 009D        
+Data: 00        
+Program Counter: 0010        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0092        
+Data: 00        
+Program Counter: 0012        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 001B        
+Data: 80        
+Program Counter: 0014        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0016        
+Data: 80        
+Program Counter: 0016        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 00C1        
+Data: 00        
+Program Counter: 0018        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 00A7        
+Data: 00        
+Program Counter: 001A        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: 00        
+Program Counter: 0000        
+Stack Pointer: 00FC        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: A9        
+Program Counter: 0000        
+Stack Pointer: 00F9        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: A9        
+Program Counter: 0000        
+Stack Pointer: 00F6        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: A9        
+Program Counter: 0000        
+Stack Pointer: 00F3        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction: BRK
+Memory Address: 0000        
+Data: A9        
+Program Counter: 0000        
+Stack Pointer: 00F0        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0000        
+Data: A9        
+Program Counter: 0001        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0000        
+Data: A9        
+Program Counter: 0002        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0000        
+Data: A9        
+Program Counter: 0003        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0000        
+Data: A9        
+Program Counter: 0004        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0093        
+Data: 00        
+Program Counter: 0006        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0088        
+Data: 00        
+Program Counter: 0008        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0010        
+Data: 01        
+Program Counter: 000A        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 000C        
+Data: 80        
+Program Counter: 000C        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 00B7        
+Data: 00        
+Program Counter: 000E        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 009D        
+Data: 00        
+Program Counter: 0010        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0092        
+Data: 00        
+Program Counter: 0012        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 001B        
+Data: 80        
+Program Counter: 0014        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 0016        
+Data: 80        
+Program Counter: 0016        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 00C1        
+Data: 00        
+Program Counter: 0018        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
+Negative:  0 Overflow:  0 Break:  0 Decimal:  0 Zero:  0 Carry:  0
+Instruction:    
+Memory Address: 00A7        
+Data: 00        
+Program Counter: 001A        
+Stack Pointer: 00FF        
+Accumulator: 00        
+Register X: 00        
+Register Y: 00        
+
