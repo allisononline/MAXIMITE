@@ -1,7 +1,7 @@
 Sub Initialise
     Accumulator = 0
-    IndexX = 0
-    IndexY = 0
+    RegisterX = 0
+    RegisterY = 0
     ProgramCounterLow = 0
     ProgramCounterHigh = 0
     StackPointer = 0

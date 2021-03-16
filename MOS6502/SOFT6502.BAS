@@ -82,7 +82,7 @@ Sub LoadC64
     BASICAddress = &HA000
     CharacterAddress = &HD000
     KernelAddress = &HE000
-    LoadProgram("BASIC.BIN",BASICAddress)
+    LoadProgram("COMBASIC.BIN",BASICAddress)
     LoadProgram("CHARS.BIN",CharacterAddress)
     LoadProgram("KERNAL.BIN",KernelAddress)
 End Sub
@@ -437,7 +437,7 @@ Sub Execute
         EndIf
         TestNegative(Result)
     ElseIf Instruction$ = "CPX" Then
-        Result = NoCarry(RegisterX-Magic)
+        Result = NoCarry(RegisterX+(Magic XOR &HFF))
         If RegisterX >= Magic Then
             WriteStatus("Carry",1)
         Else
@@ -450,7 +450,7 @@ Sub Execute
         EndIf
         TestNegative(Result)
     ElseIf Instruction$ = "CPY" Then
-        Result = NoCarry(RegisterY-Magic)
+        Result = NoCarry(RegisterY+(Magic XOR &HFF))
         If RegisterY >= Magic Then
             WriteStatus("Carry",1)
         Else
@@ -485,19 +485,19 @@ Sub Execute
         TestNegative(Result)
         Accumulator = Result
     ElseIf Instruction$ = "INC" Then
-        Result = NoCarry(Magic + 1)
+        Result = Magic + 1
         TestZero(Result)
         TestNegative(Result)
         SaveNumber(Result)
     ElseIf Instruction$ = "INX" Then
         Magic = RegisterX
-        Result = NoCarry(Magic + 1)
+        Result = Magic + 1
         TestZero(Result)
         TestNegative(Result)
         RegisterX = Result
     ElseIf Instruction$ = "INY" Then
         Magic = RegisterY
-        Result = NoCarry(Magic + 1)
+        Result = Magic + 1
         TestZero(Result)
         TestNegative(Result)
         RegisterX = Result
@@ -665,7 +665,7 @@ End Sub
 
 Function PullStack()
     PullStack = ReadMemory(StackAddress+StackPointer)
-    StackPointer = StackPointer + 1
+    StackPointer = NoCarry(StackPointer+1)
 End Function
 
 Function NoCarry(Value3)
