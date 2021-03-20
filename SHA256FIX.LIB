@@ -1,0 +1,56 @@
+Sub Hashinit
+    Dim H%(8)
+    Dim K%(64)
+    H%(0)=&H6a09e667:H%(1)=&Hbb67ae85:H%(2)=&H3c6ef372:H%(3)=&Ha54ff53a
+    H%(4)=&H510e527f:H%(5)=&H9b05688c:H%(6)=&H1f83d9ab:H%(7)=&H5be0cd19
+    K%(0)=&H428a2f98:K%(1)=&H71374491:K%(2)=&Hb5c0fbcf:K%(3)=&He9b5dba5
+    K%(4)=&H3956c25b:K%(5)=&H59f111f1:K%(6)=&H923f82a4:K%(7)=&Hab1c5ed5
+    K%(8)=&Hd807aa98:K%(9)=&H12835b01:K%(10)=&H243185be:K%(11)=&H550c7dc3
+    K%(12)=&H72be5d74:K%(13)=&H80deb1fe:K%(14)=&H9bdc06a7:K%(15)=&Hc19bf174
+    K%(16)=&He49b69c1:K%(17)=&Hefbe4786:K%(18)=&H0fc19dc6:K%(19)=&H240ca1cc
+    K%(20)=&H2de92c6f:K%(21)=&H4a7484aa:K%(22)=&H5cb0a9dc:K%(23)=&H76f988da
+    K%(24)=&H983e5152:K%(25)=&Ha831c66d:K%(26)=&Hb00327c8:K%(27)=&Hbf597fc7
+    K%(28)=&Hc6e00bf3:K%(29)=&Hd5a79147:K%(30)=&H06ca6351:K%(31)=&H14292967
+    K%(32)=&H27b70a85:K%(33)=&H2e1b2138:K%(34)=&H4d2c6dfc:K%(35)=&H53380d13
+    K%(36)=&H650a7354:K%(37)=&H766a0abb:K%(38)=&H81c2c92e:K%(39)=&H92722c85
+    K%(40)=&Ha2bfe8a1:K%(41)=&Ha81a664b:K%(42)=&Hc24b8b70:K%(43)=&Hc76c51a3
+    K%(44)=&Hd192e819:K%(45)=&Hd6990624:K%(46)=&Hf40e3585:K%(47)=&H106aa070
+    K%(48)=&H19a4c116:K%(49)=&H1e376c08:K%(50)=&H2748774c:K%(51)=&H34b0bcb5
+    K%(52)=&H391c0cb3:K%(53)=&H4ed8aa4a:K%(54)=&H5b9cca4f:K%(55)=&H682e6ff3
+    K%(56)=&H748f82ee:K%(57)=&H78a5636f:K%(58)=&H84c87814:K%(59)=&H8cc70208
+    K%(60)=&H90befffa:K%(61)=&Ha4506ceb:K%(62)=&Hbef9a3f7:K%(63)=&Hc67178f2
+End Sub
+
+Sub LoadWords(MsgInput$)
+    Local L = Len(MsgInput$)
+    For i = 0 To 15
+        Word% = 0
+        For j = 0 to 3
+            Word% = Word% * &H100
+            Word% = Word% + Asc(Mid$(MsgInput$,(i*4)+j+1),1)
+        Next
+        W%(i) = Word%
+    Next
+    Local K = 64-L-8
+    If K > 0 Then
+        W%(Fix(L/4)) = W%(Fix(L/4)) OR &H80*(&H100^(3-(L Mod(4))))
+        W%(15) = LOF(#3)*8
+    EndIf
+End Sub
+
+Function RotateRight(Value,Bits)
+    Carry = Value AND ((Bits*2)-1)
+    RotateRight = Fix(Value/(2^Bits)) + (Carry*(2^(32-Bits)))
+End Function
+
+Sub Test
+    Open "HELLWRLD.TXT" For Input As #3
+    Dim W%(64)
+    HashInit
+    LoadWords("hello world")
+    Print Bin$(K%(6))
+    Print Bin$(RotateRight(K%(6),2))
+    Close #3
+End Sub
+
+Test

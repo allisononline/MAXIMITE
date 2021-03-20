@@ -13,15 +13,15 @@ Sub Initialise
     StackPointer = 0
     StatusRegister = 0
     InstructionRegister = 0
-    MemoryAddress = 0
-    Magic = 0
+    CPUMemoryAddress = 0
+    CPUData = 0
 
     StackAddress = &H0100
     NonMaskRequest = &HFFFA
     PowerResetRequest = &HFFFC
     BreakRequest = &HFFFE
 
-    OneMinus = 1 XOR &HFF
+    OneMinus = &HFF
 
     Instruction$ = "   "
     Address$ = "   "
@@ -40,8 +40,8 @@ Sub PowerReset
 End Sub
 
 Sub NonMaskInterrupt
-    LoByte = ProgramCounter AND &HFF
-    HiByte = Fix(ProgramCounter/&H100)
+    Local LoByte = ProgramCounter AND &HFF
+    Local HiByte = Fix(ProgramCounter/&H100)
     PushStack(HiByte)
     PushStack(LoByte)
     PushStack(StatusRegister)
@@ -50,8 +50,8 @@ Sub NonMaskInterrupt
 End Sub
 
 Sub IRQInterrupt
-    LoByte = ProgramCounter AND &HFF
-    HiByte = Fix(ProgramCounter/&H100)
+    Local LoByte = ProgramCounter AND &HFF
+    Local HiByte = Fix(ProgramCounter/&H100)
     PushStack(HiByte)
     PushStack(LoByte)
     PushStack(StatusRegister)
@@ -68,14 +68,36 @@ Sub Test
         Cycle
         FileOutput
         PrintData
-    Loop
+        Delay
+    Loop Until Instruction$ = "BRK"
     Print "TILT!"
 End Sub
 
-Sub PrintData
-    If Magic => 32 AND Magic =< 126 Then
-        Print CHR$(Magic);
-    EndIf
+Sub Delay
+    Do While InKey$ = ""
+    Loop
+End Sub
+
+Sub LoadKIM
+    Initialise
+    M6530Init
+    SevenSegInit
+    WriteMemory(PowerResetRequest,&H22)
+    WriteMemory(PowerResetRequest+1,&H1C)
+    WriteMemory(NonMaskRequest,&H00)
+    WriteMemory(NonMaskRequest,&H1C)
+    WriteMemory(BreakRequest,&H00)
+    WriteMemory(BreakRequest,&H1C)
+    PowerReset
+    Do
+        'WriteMemory(PeripheralAAddr,1)
+        Cycle
+        TeleType
+        StatusDisplay
+        FileOutput
+        SevenSegOutput
+        'Delay
+    Loop
 End Sub
 
 Sub LoadC64
@@ -103,7 +125,9 @@ Sub Cycle
     Decode
     GetAddress
     GetNumber
+    M6530Load
     Execute
+    M6530Store
 End Sub
 
 Sub Fetch
@@ -112,11 +136,11 @@ Sub Fetch
 End Sub
 
 Sub Decode
-    Group = InstructionRegister And &B11
-    AddressType = (InstructionRegister And &B11100)/&B100
-    InstructionType= (InstructionRegister And &B11100000)/&B100000
-    HiNibble = Fix(InstructionRegister/&H10)
-    LoNibble = InstructionRegister AND &HF
+    Local Group = InstructionRegister And &B11
+    Local AddressType = (InstructionRegister And &B11100)/&B100
+    Local InstructionType= (InstructionRegister And &B11100000)/&B100000
+    Local HiNibble = Fix(InstructionRegister/&H10)
+    Local LoNibble = InstructionRegister AND &HF
     If Group = &B00 Then
         If InstructionType = &B001 Then
             Instruction$ = "BIT"
@@ -239,10 +263,16 @@ Sub Decode
             Instruction$ = "BVS"
         ElseIf HiNibble = &H9 Then
             Instruction$ = "BCC"
+        ElseIf HiNibble = &HA Then
+            Address$ = "#"
         ElseIf HiNibble = &HB Then
             Instruction$ = "BCS"
+        ElseIf HiNibble = &HC Then
+            Address$ = "#"
         ElseIf HiNibble = &HD Then
             Instruction$ = "BNE"
+        ElseIf HiNibble = &HE Then
+            Address$ = "#"
         ElseIf HiNibble = &HF Then
             Instruction$ = "BEQ"
         EndIf
@@ -301,107 +331,104 @@ End Sub
 
 Sub GetAddress
     If Address$ = "#" Then
-        MemoryAddress = ProgramCounter
+        CPUMemoryAddress = ProgramCounter
         ProgramCounter = ProgramCounter + 1
     ElseIf Address$ = "a" Then
-        MemoryAddress = ReadAddress(ProgramCounter)
+        CPUMemoryAddress = ReadAddress(ProgramCounter)
         ProgramCounter = ProgramCounter + 2
     ElseIf Address$ = "zp" Then
-        MemoryAddress = ReadMemory(ProgramCounter)
+        CPUMemoryAddress = ReadMemory(ProgramCounter)
         ProgramCounter = ProgramCounter + 1
     ElseIf Address$ = "r" Then
-        MemoryAddress = ReadMemory(ProgramCounter)
+        CPUMemoryAddress = PageWrapAdd(ProgramCounter,ReadMemory(ProgramCounter))+1
         ProgramCounter = ProgramCounter + 1
-        If MemoryAddress AND &H80 > 0 Then
-            MemoryAddress = MemoryAddress + &HFF00
-        EndIf
     ElseIf Address$ = "(a)" Then
-        MemoryAddress = ReadAddress(ProgramCounter)
-        MemoryAddress = ReadAddress(MemoryAddress)
+        CPUMemoryAddress = ReadAddress(ProgramCounter)
+        CPUMemoryAddress = ReadAddress(CPUMemoryAddress)
     ElseIf Address$ = "a,x" Then
-        MemoryAddress = ReadAddress(ProgramCounter)+RegisterX
+        CPUMemoryAddress = ReadAddress(ProgramCounter)+RegisterX
         ProgramCounter = ProgramCounter + 2
     ElseIf Address$ = "a,y" Then
-        MemoryAddress = ReadAddress(ProgramCounter)+RegisterY
+        CPUMemoryAddress = ReadAddress(ProgramCounter)+RegisterY
         ProgramCounter = ProgramCounter + 2
     ElseIf Address$ = "zp,x" Then
-        MemoryAddress = NoCarry(ReadMemory(ProgramCounter)+RegisterX)
-        ProgramCounter = ProgramCOunter + 1
+        CPUMemoryAddress = NoCarry(ReadMemory(ProgramCounter)+RegisterX)
+        ProgramCounter = ProgramCounter + 1
     ElseIf Address$ = "zp,y" Then
-        MemoryAddress = NoCarry(ReadMemory(ProgramCounter)+RegisterY)
+        CPUMemoryAddress = NoCarry(ReadMemory(ProgramCounter)+RegisterY)
         ProgramCounter = ProgramCounter + 1
     ElseIf Address$ = "(zp,x)" Then
-        MemoryAddress = NoCarry(ReadMemory(ProgramCounter)+RegisterX)
+        CPUMemoryAddress = NoCarry(ReadMemory(ProgramCounter)+RegisterX)
         ProgramCounter = ProgramCounter + 1
-        MemoryAddress = ReadAddress(MemoryAddress)
+        CPUMemoryAddress = ReadAddress(CPUMemoryAddress)
     ElseIf Address$ = "(zp),y" Then
-        MemoryAddress = PageWrapAdd(ReadMemory(ProgramCounter),1)
+        CPUMemoryAddress = PageWrapAdd(ReadMemory(ProgramCounter),1)
         ProgramCounter = ProgramCounter + 1
-        MemoryAddress = ReadAddress(MemoryAddress)+RegisterY
-        MemoryAddress = PageWrapAdd(MemoryAddress,RegisterY)
+        CPUMemoryAddress = ReadAddress(CPUMemoryAddress)+RegisterY
+        CPUMemoryAddress = PageWrapAdd(CPUMemoryAddress,RegisterY)
     EndIf
 End Sub
 
 Sub GetNumber
     If Address$ = "A" Then
-        Magic = Accumulator
+        CPUData = Accumulator
     Else
-        Magic = ReadMemory(MemoryAddress)
+        CPUData = ReadMemory(CPUMemoryAddress)
     EndIf
 End Sub
 
 Sub Execute
-    Result = Magic
+    Result = CPUData
     If Instruction$ = "ADC" Then
-        Result = Accumulator + Magic + ReadStatus("Carry")
+        Result = Accumulator + CPUData + ReadStatus("Carry")
         TestCarry(Result)
         TestZero(Result)
         TestNegative(Result)
-        TestOverflow(Accumulator,Magic)
+        TestOverflow(Accumulator,CPUData)
         Accumulator = NoCarry(Result)
     ElseIf Instruction$ = "AND" Then
-        Result = Accumulator AND Magic
+        Result = Accumulator AND CPUData
         TestZero(Result)
         TestNegative(Result)
         Accumulator = NoCarry(Result)
     ElseIf Instruction$ = "ASL" Then
-        Result = Magic * &B10
+        Result = CPUData * &B10
         TestCarry(Result)
         TestZero(Result)
         TestNegative(Result)
         SaveNumber(Result)
     ElseIf Instruction$ = "BCC" Then
         If ReadStatus("Carry") = 0 Then
-            ProgramCounter = ProgramCounter + MemoryAddress
+            ProgramCounter = CPUMemoryAddress
         EndIf
     ElseIf Instruction$ = "BCS" Then
         If ReadStatus("Carry") = 1 Then
-            ProgramCounter = ProgramCounter + MemoryAddress
+            ProgramCounter = CPUMemoryAddress
         EndIf
     ElseIf Instruction$ = "BEQ" Then
         If ReadStatus("Zero") = 1 Then
-            ProgramCounter = ProgramCounter + MemoryAddress
+            ProgramCounter = CPUMemoryAddress
         EndIf
     ElseIf Instruction$ = "BIT" Then
-        Result = Magic AND Accumulator
+        Result = CPUData AND Accumulator
         TestZero(Result)
         WriteStatus("Overflow",Result And &B100000)
         WriteStatus("Negative",Result And &B1000000)
     ElseIf Instruction$ = "BMI" Then
         If ReadStatus("Negative") = 1 Then
-            ProgramCounter = ProgramCounter + MemoryAddress
+            ProgramCounter = CPUMemoryAddress
         EndIf
     ElseIf Instruction$ = "BNE" Then
         If ReadStatus("Zero") = 0 Then
-            ProgramCounter = ProgramCounter + MemoryAddress
+            ProgramCounter = CPUMemoryAddress
         EndIf
     ElseIf Instruction$ = "BPL" Then
         If ReadStatus("Negative") = 0 Then
-            ProgramCounter = ProgramCounter + MemoryAddress
+            ProgramCounter = CPUMemoryAddress
         EndIf
     ElseIf Instruction$ = "BRK" Then
-        HiByte = Fix(ProgramCounter/&H100)
-        LoByte = ProgramCounter AND &HFF
+        Local HiByte = Fix(ProgramCounter/&H100)
+        Local LoByte = ProgramCounter AND &HFF
         PushStack(HiByte)
         PushStack(LoByte)
         PushStack(StatusRegister)
@@ -409,11 +436,11 @@ Sub Execute
         WriteStatus("Break",1)
     ElseIf Instruction$ = "BVC" Then
         If ReadStatus("Overflow") = 0 Then
-            ProgramCounter = ProgramCounter + MemoryAddress
+            ProgramCounter = CPUMemoryAddress
         EndIf
     ElseIf Instruction$ = "BVS" Then
         If ReadStatus("Overflow") = 1 Then
-            ProgramCounter = ProgramCounter + MemoryAddress
+            ProgramCounter = CPUMemoryAddress
         EndIf
     ElseIf Instruction$ = "CLC" Then
         WriteStatus("Carry",0)
@@ -424,106 +451,106 @@ Sub Execute
     ElseIf Instruction$ = "CLV" Then
         WriteStatus("Overflow",0)
     ElseIf Instruction$ = "CMP" Then
-        Result = NoCarry(Accumulator+(Magic XOR &HFF))
-        If Accumulator >= Magic Then
+        Result = NoCarry(Accumulator+(CPUData XOR &HFF))
+        If Accumulator >= CPUData Then
             WriteStatus("Carry",1)
         Else
             WriteStatus("Carry",0)
         EndIf
-        If Accumulator = Magic Then
+        If Accumulator = CPUData Then
             WriteStatus("Zero",1)
         Else
             WriteStatus("Zero",0)
         EndIf
         TestNegative(Result)
     ElseIf Instruction$ = "CPX" Then
-        Result = NoCarry(RegisterX+(Magic XOR &HFF))
-        If RegisterX >= Magic Then
+        Result = NoCarry(RegisterX+(CPUData XOR &HFF))
+        If RegisterX >= CPUData Then
             WriteStatus("Carry",1)
         Else
             WriteStatus("Carry",0)
         EndIf
-        If RegisterX = Magic Then
+        If RegisterX = CPUData Then
             WriteStatus("Zero",1)
         Else
             WriteStatus("Zero",0)
         EndIf
         TestNegative(Result)
     ElseIf Instruction$ = "CPY" Then
-        Result = NoCarry(RegisterY+(Magic XOR &HFF))
-        If RegisterY >= Magic Then
+        Result = NoCarry(RegisterY+(CPUData XOR &HFF))
+        If RegisterY >= CPUData Then
             WriteStatus("Carry",1)
         Else
             WriteStatus("Carry",0)
         EndIf
-        If RegisterY = Magic Then
+        If RegisterY = CPUData Then
             WriteStatus("Zero",1)
         Else
             WriteStatus("Zero",0)
         EndIf
         TestNegative(Result)
     ElseIf Instruction$ = "DEC" Then
-        Result = NoCarry(Magic + OneMinus)
+        Result = NoCarry(CPUData + OneMinus)
         TestZero(Result)
         TestNegative(Result)
         SaveNumber(result)
     ElseIf Instruction$ = "DEX" Then
-        Magic = RegisterX
-        Result = NoCarry(Magic + OneMinus)
+        CPUData = RegisterX
+        Result = NoCarry(CPUData + OneMinus)
         TestZero(Result)
         TestNegative(Result)
         RegisterX = Result
     ElseIf Instruction$ = "DEY" Then
-        Magic = RegisterY
-        Result = NoCarry(Magic + OneMinus)
+        CPUData = RegisterY
+        Result = NoCarry(CPUData + OneMinus)
         TestZero(Result)
         TestNegative(Result)
-        RegisterX = Result
+        RegisterY = Result
     ElseIf Instruction$ = "EOR" Then
-        Result = Accumulator XOR Magic
+        Result = Accumulator XOR CPUData
         TestZero(Result)
         TestNegative(Result)
         Accumulator = Result
     ElseIf Instruction$ = "INC" Then
-        Result = Magic + 1
+        Result = CPUData + 1
         TestZero(Result)
         TestNegative(Result)
         SaveNumber(Result)
     ElseIf Instruction$ = "INX" Then
-        Magic = RegisterX
-        Result = Magic + 1
+        CPUData = RegisterX
+        Result = CPUData + 1
         TestZero(Result)
         TestNegative(Result)
         RegisterX = Result
     ElseIf Instruction$ = "INY" Then
-        Magic = RegisterY
-        Result = Magic + 1
+        CPUData = RegisterY
+        Result = CPUData + 1
         TestZero(Result)
         TestNegative(Result)
         RegisterX = Result
     ElseIf Instruction$ = "JMP" Then
-        ProgramCounter = MemoryAddress
+        ProgramCounter = CPUMemoryAddress
     ElseIf Instruction$ = "JSR" Then
-        HiByte = Fix((ProgramCounter-1)/&H100)
-        LoByte = (ProgramCounter-1) AND &HFF
+        Local HiByte = Fix((ProgramCounter-1)/&H100)
+        Local LoByte = (ProgramCounter-1) AND &HFF
         PushStack(HiByte)
         PushStack(LoByte)
-        ProgramCounter = MemoryAddress
+        ProgramCounter = CPUMemoryAddress
     ElseIf Instruction$ = "LDA" Then
-        TestZero(Magic)
-        TestNegative(Magic)
-        Accumulator = Magic
+        TestZero(CPUData)
+        TestNegative(CPUData)
+        Accumulator = CPUData
     ElseIf Instruction$ = "LDX" Then
-        TestZero(Magic)
-        TestNegative(Magic)
-        RegisterX = Magic
+        TestZero(CPUData)
+        TestNegative(CPUData)
+        RegisterX = CPUData
     ElseIf Instruction$ = "LDY" Then
-        TestZero(Magic)
-        TestNegative(Magic)
-        RegisterY = Magic
+        TestZero(CPUData)
+        TestNegative(CPUData)
+        RegisterY = CPUData
     ElseIf Instruction$ = "LSR" Then
-        Result = Fix(Magic/2)
-        If Magic AND 1 = 1 Then
+        Result = Fix(CPUData/2)
+        If CPUData AND 1 = 1 Then
             WriteStatus("Carry",1)
         Else
             WriteStatus("Carry",0)
@@ -535,7 +562,7 @@ Sub Execute
         Do While 1 < 0
         Loop
     ElseIf Instruction$ = "ORA" Then
-        Result = Accumulator OR Magic
+        Result = Accumulator OR CPUData
         TestZero(Result)
         TestNegative(Result)
         Accumulator = Result
@@ -552,32 +579,29 @@ Sub Execute
         StatusRegister = PullStack()
         WriteStatus("Constant",1)
     ElseIf Instruction$ = "ROL" Then
-        Result = (Magic*2) + ReadStatus("Carry")
+        Result = (CPUData*2) + ReadStatus("Carry")
         TestCarry(Result)
         TestNegative(Result)
-        TestSign(result)
         SaveNumber(Result)
     ElseIf Instruction$ = "ROR" Then
-        Result = Fix(Magic/2) + ReadStatus("Carry")
+        Result = Fix(CPUData/2) + ReadStatus("Carry")
         TestCarry(Result)
         TestNegative(Result)
-        TestSign(result)
         SaveNumber(Result)
     ElseIf Instruction$ = "RTI" Then
         StatusRegister = PullStack()
-        LoByte = PullStack()
-        HiByte = PullStack()
+        Local LoByte = PullStack()
+        Local HiByte = PullStack()
         ProgramCounter = (HiByte*&H100)+LoByte
     ElseIf Instruction$ = "RTS" Then
-        LoByte = PullStack()
-        HiByte = PullStack()
+        Local LoByte = PullStack()
+        Local HiByte = PullStack()
         ProgramCounter = (HiByte*&H100)+LoByte+1
     ElseIf Instruction$ = "SBC" Then
-        Result = (Magic XOR &HFF)+Accumulator+ReadStatus("Carry")
+        Result = (CPUData XOR &HFF)+Accumulator+ReadStatus("Carry")
         TestCarry(Result)
         TestNegative(Result)
-        TestNegative(Result)
-        TestOverflow(Magic,Accumulator)
+        TestOverflow(CPUData,Accumulator)
         Accumulator = NoCarry(Result)
     ElseIf Instruction$ = "SEC" Then
         WriteStatus("Carry",1)
@@ -620,7 +644,7 @@ Sub SaveNumber(Value)
     If Address$ = "A" Then
         Accumulator = NoCarry(Value)
     Else
-        WriteMemory(MemoryAddress,NoCarry(Value))
+        WriteMemory(CPUMemoryAddress,NoCarry(Value))
     EndIf
 End Sub
 
@@ -650,7 +674,7 @@ End Sub
 
 Sub TestOverflow(Value1,Value2)
     WriteStatus("Overflow",0)
-    Bit = (Value1 AND &H80) AND (Value2 AND &H80)/&H80
+    Local Bit = (Value1 AND &H80) AND (Value2 AND &H80)/&H80
     If Bit = 1 Then
         If Bit <> (ReadStatus("Carry") Then
             WriteStatus("Overflow",1)
@@ -664,8 +688,8 @@ Sub PushStack(Value)
 End Sub
 
 Function PullStack()
-    PullStack = ReadMemory(StackAddress+StackPointer)
     StackPointer = NoCarry(StackPointer+1)
+    PullStack = ReadMemory(StackAddress+StackPointer)
 End Function
 
 Function NoCarry(Value3)
@@ -673,15 +697,15 @@ Function NoCarry(Value3)
 End Function
 
 Function ReadAddress(Address)
-    LoByte = ReadMemory(Address)
-    HiByte = ReadMemory(PageWrapAdd(Address,1))
+    Local LoByte = ReadMemory(Address)
+    Local HiByte = ReadMemory(PageWrapAdd(Address,1))
     ReadAddress = (HiByte*&H100)+LoByte
     DebugMsg(Hex$(ReadAddress))
 End Function
 
 Function PageWrapAdd(Value,incr)
-    LoByte2 = NoCarry(Value+incr)
-    HiByte2 = (Value AND &HFF00)
+    Local LoByte2 = NoCarry(Value+incr)
+    Local HiByte2 = (Value AND &HFF00)
     PageWrapAdd = LoByte2 + HiByte2
 End Function
 
@@ -701,7 +725,7 @@ Function ReadStatus(Flag$)
     ElseIf Flag$ = "Carry" Then
         Bit = 0
     EndIf
-    Mask = 2^Bit
+    Local Mask = 2^Bit
     If (StatusRegister And Mask) = 0 Then
         ReadStatus = 0
     Else
@@ -727,7 +751,7 @@ Sub WriteStatus(Flag$,status)
     ElseIf Flag$ = "Carry" Then
         Bit = 0
     EndIf
-    Mask = 2^Bit
+    Local Mask = 2^Bit
     If status = 0 Then
         StatusRegister = StatusRegister AND (255-Mask)
     Else
@@ -762,8 +786,8 @@ Sub StatusDisplay
     Print " Carry: ";
     Print ReadStatus("Carry")
     Print "Instruction: "+Instruction$+" "+Address$+Space$(8)
-    Print "Memory Address: "+Padding$(Hex$(MemoryAddress),4)+Space$(8)
-    Print "Data: "+Padding$(Hex$(NoCarry(Result)),4)+Space$(8)
+    Print "Memory Address: "+Padding$(Hex$(CPUMemoryAddress),4)+Space$(8)
+    Print "Data: "+Padding$(Hex$(NoCarry(Result)),2)+Space$(8)
     Print "Program Counter: "+Padding$(Hex$(ProgramCounter),4)+Space$(8)
     Print "Stack Pointer: "+Padding$(Hex$(StackPointer),2)+Space$(8)
     Print "Accumulator: "+Padding$(Hex$(Accumulator),2)+Space$(8)
@@ -788,7 +812,7 @@ Sub FileOutput
     Print #5, " Carry: ";
     Print #5, ReadStatus("Carry")
     Print #5, "Instruction: "+Instruction$+" "+Address$
-    Print #5, "Memory Address: "+Padding$(Hex$(MemoryAddress),4)
+    Print #5, "Memory Address: "+Padding$(Hex$(CPUMemoryAddress),4)
     Print #5, "Data: "+Padding$(Hex$(NoCarry(Result)),2)
     Print #5, "Program Counter: "+Padding$(Hex$(ProgramCounter),4)
     Print #5, "Stack Pointer: "+Padding$(Hex$(StackPointer),2)
@@ -807,4 +831,87 @@ Function Padding$(InString$,Numbers)
     EndIf
 End Function
 
-Test
+Sub M6530Init
+    M65302Addr = &H1C00
+    M65303Addr = &H1800
+    PeripheralAAddr = &H1740
+    PeripheralBAddr = &H1742
+    PeripheralA = 0
+    PeripheralB = 0
+    LoadProgram("KIMROM2.BIN",M65302Addr)
+    LoadProgram("KIMROM3.BIN",M65303Addr)
+End Sub
+
+Sub M6530Store
+    If Instruction$ = "STA" Or Instruction$ = "STX" Or Instruction$ = "STY" Then
+        If CPUMemoryAddress = PeripheralAAddr Then
+            PeripheralA = ReadMemory(PeripheralAAddr)
+        ElseIf CPUMemoryAddress = PeripheralBAddr Then
+            PeripheralB = ReadMemory(PeripheralBAddr)
+        EndIf
+    EndIf
+End Sub
+
+Sub M6530Load
+    If Instruction$ = "LDA" Or Instruction$ = "LDX" Or Instruction$ = "LDY" Then
+        If CPUMemoryAddress = PeripheralAAddr Then
+            WriteMemory(PeripheralAAddr,PeripheralA)
+        ElseIf CPUMemoryAddress = PeripheralBAddr Then
+            WriteMemory(PeripheralBAddr,PeripheralB)
+        EndIf
+    EndIf
+End Sub
+
+Sub SevenSegInit
+    Dim CharCode(16)
+    CharCode(&H0) = &H3F
+    CharCode(&H1) = &H06
+    CharCode(&H2) = &H5B
+    CharCode(&H3) = &H4F
+    CharCode(&H4) = &H66
+    CharCode(&H5) = &H6D
+    CharCode(&H6) = &H7D
+    CharCode(&H7) = &H07
+    CharCode(&H8) = &H7F
+    CharCode(&H9) = &H6F
+    CharCode(&HA) = &H77
+    CharCode(&HB) = &H7C
+    CharCode(&HC) = &H39
+    CharCode(&HD) = &H5E
+    CharCode(&HE) = &H79
+    CharCode(&HF) = &H71
+    Dim SegOutput(6)
+End Sub
+
+Sub SevenSegOutput
+    SegDisplay = Fix((ReadMemory(PeripheralBAddr) AND &H1E)/2)
+    If SegDisplay => 4 AND SegDisplay =< 9 Then
+        SegCode = ReadMemory(PeripheralAAddr) AND &H7F
+        For i = 0 To &HF
+            If SegCode = CharCode(i) Then
+                SegOutput(SegDisplay-4) = i
+            EndIf
+        Next
+        For i = 0 To 5
+            Print Hex$(SegOutput(i));
+        Next
+        Print ""
+    EndIf
+End Sub
+
+Sub TeleType
+    If InstructionRegister = &H1C52 Then
+        WriteMemory(PeripheralA,&H01)
+    EndIf
+    If InstructionRegister = &H1EA0 Then
+        Print Chr$(ReadMemory(&HFE));
+    EndIf
+End Sub
+
+Sub KeyPress
+    If (PeripheralB AND &H1E)/2 = 1 Then
+        PeripheralA = PeripheralA OR 1
+    EndIf
+End Sub
+
+LoadKIM
