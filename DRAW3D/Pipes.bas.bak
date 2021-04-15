@@ -1,0 +1,52 @@
+Function FOV(COORD1,COORD2)
+    DISTANCE = 240
+    ANGLE = Atn(COORD1 / (DISTANCE + COORD2))
+    FOV = (Tan(ANGLE) * DISTANCE)
+End Function
+
+SUB DRAWDOT
+    PIXEL CENTRE.X+FOV(DOTX,DOTZ),CENTRE.Y+FOV(DOTY,DOTZ),RGB(0,255*(1/(1+((DotZ+400)/800))^2),0)
+END SUB
+
+Sub NEWDIR
+    OldDir = CurrDir
+    DO
+        DO
+            CurrDir = FIX(RND()*7)-3
+        Loop UNTIL CurrDir <> 0
+    Loop UNTIL ABS(CurrDir) <> ABS(OldDir)
+END Sub
+
+SUB MOVEDOT
+    IF CURRDIR = -3 THEN
+        DOTZ = DOTZ-1
+    ELSEIF CURRDIR = -2 THEN
+        DOTY = DOTY - 1
+    ELSEIF CURRDIR = -1 THEN
+        DOTX = DOTX - 1
+    ELSEIF CURRDIR = 1 THEN
+        DOTX = DOTX + 1
+    ELSEIF CURRDIR = 2 THEN
+        DOTY = DOTY + 1
+    ELSEIF CURRDIR = 3 THEN
+        DOTZ = DOTZ + 1
+    ENDIF
+END SUB
+
+CENTRE.X = (MM.HRES/2)
+CENTRE.Y = (MM.VRES/2)
+DOTX = 1
+DOTY = 1
+DOTZ = 1
+CurrDir = 1
+NEWDIR
+DO
+    MOVEDOT
+    IF ABS(DOTX) OR ABS(DOTY) OR ABS(DOTZ) > 100 THEN
+        NEWDIR
+        DRAWDOT
+    ELSE
+        DRAWDOT
+    ENDIF
+LOOP
+

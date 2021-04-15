@@ -1,0 +1,31 @@
+Sub Plus Number
+    Number = Number + 1
+End Sub
+
+Sub Minus Number
+    Number = Number - 1
+End Sub
+
+Function Word$(Inline3$,Wordnum)
+    If Wordnum < 1 Then
+        Wordnum = 1
+    Endif
+    Local K = 0
+    Word$ = ""
+    Start = 1
+    For I = 1 To Wordnum
+        Start = Start + K
+        K = 0
+        Do While Mid$(Inline3$,Start+K,1) = " "
+            K = K + 1
+        Loop
+        Start = Start + K
+        K = 0
+        Do While Mid$(Inline3$,Start+K,1) <> " " And  Start+K =< Len(Inline3$)
+            K = K + 1
+        Loop
+    Next
+    If K > 0 Then
+        Word$ = Mid$(Inline3$,Start,K)
+    Endif
+End Function

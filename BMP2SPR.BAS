@@ -11,7 +11,6 @@ Seek #3, &H1C+1
 ColourDepth = ReadNumber(2)
 
 
-
 Function ReadNumber(Length)
     For i = 0 To Length - 1
         ReadNumber = ReadNumber + (Asc(Input$(1,#3))*(&H100^(i-1)))

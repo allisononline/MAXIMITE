@@ -1,0 +1,176 @@
+Sub Readfile(Filename$)
+    Memmax = 1024
+    Inline$ = ""
+    Points = 0
+    Lines = 0
+    Open Filename$ For Random As #3
+    Seek #3,1
+    CountPointsLines(Points,Lines)
+    Dim PointArray(Points,3)
+    Dim LineArray(Lines,3)
+    Points = 0
+    Lines = 0
+    Seek #3,1
+    Do While Eof(#3) = 0
+        ProcessLine(Points,Lines)
+    Loop 
+    Close #3
+    Normalise(PointArray())
+End Sub
+
+Sub ProcessLine(Points3,Lines3)
+    Line Input #3,Inline$
+    If Word$(Inline$,1) = "v" Then
+        For V = 0 To 2
+            PointArray(Points,V) = Val(Word$(Inline$,V+2))
+        Next
+        Plus Points3
+    Elseif Word$(Inline$,1) = "f" Or Word$(Inline$,1) = "l" Then
+        For F = 0 To 2
+            LineArray(Lines,F) = Val(Word$(Inline$,F+2))
+        Next           
+        Plus Lines3
+    Endif
+End Sub
+
+Sub Progress(Total,Position)
+    Percent = Fix((Position/Total)*100)
+    Bargrph$ = Space$(22)
+    Poke Var Bargrph$,1,91
+    Poke Var Bargrph$,22,93
+    For L = 2 To Fix(Percent/5)+1
+        Poke Var Bargrph$,L,35
+    Next
+    Print @(0,MM.Info(VPos)) Bargrph$+" "+Format$(Percent)+"%";
+End Sub
+
+Sub CountPointsLines(Points2,Lines2)
+    Do While Eof(#3) = 0
+        Line Input #3,Inline$
+        If Word$(Inline$,1) = "v" Then
+            Points2 = Points2 + 1
+        Elseif Word$(Inline$,1) = "f" Or Word$(Inline$,1) = "l" Then
+            Lines2 = Lines2 + 1
+        Endif
+    Loop
+End Sub
+
+Sub Rotate(ObjectPoints(),Dir$,Incre)
+    If Incre = 0 Then
+        Incre = 15
+    Endif
+    For i = 0 To Points - 1
+        If Dir$ = "ZMINUS" Then
+            X = (ObjectPoints(i, 0) * Cos(Rad(Incre))) - (ObjectPoints(i, 1) * Sin(Rad(Incre)))
+            Y = (ObjectPoints(i, 0) * Sin(Rad(Incre))) + (ObjectPoints(i, 1) * Cos(Rad(Incre)))
+            ObjectPoints(i, 0) = X
+            ObjectPoints(i, 1) = Y
+        Elseif Dir$ = "ZPLUS" Then
+            X = (ObjectPoints(i, 0) * Cos(Rad(-Incre))) - (ObjectPoints(i, 1) * Sin(Rad(-Incre)))
+            Y = (ObjectPoints(i, 0) * Sin(Rad(-Incre))) + (ObjectPoints(i, 1) * Cos(Rad(-Incre)))
+            ObjectPoints(i, 0) = X
+            ObjectPoints(i, 1) = Y
+        Elseif Dir$ = "XMINUS" Then
+            Y = (ObjectPoints(i, 1) * Cos(Rad(Incre))) - (ObjectPoints(i, 2) * Sin(Rad(Incre)))
+            Z = (ObjectPoints(i, 1) * Sin(Rad(Incre))) + (ObjectPoints(i, 2) * Cos(Rad(Incre)))
+            ObjectPoints(i, 1) = Y
+            ObjectPoints(i, 2) = Z
+        Elseif Dir$ = "XPLUS" Then
+            Y = (ObjectPoints(i, 1) * Cos(Rad(-Incre))) - (ObjectPoints(i, 2) * Sin(Rad(-Incre)))
+            Z = (ObjectPoints(i, 1) * Sin(Rad(-Incre))) + (ObjectPoints(i, 2) * Cos(Rad(-Incre)))
+            ObjectPoints(i, 1) = Y
+            ObjectPoints(i, 2) = Z
+        Elseif Dir$ = "YMINUS" Then
+            X = (ObjectPoints(i, 0) * Cos(Rad(Incre))) - (ObjectPoints(i, 2) * Sin(Rad(Incre)))
+            Z = (ObjectPoints(i, 0) * Sin(Rad(Incre))) + (ObjectPoints(i, 2) * Cos(Rad(Incre)))
+            ObjectPoints(i, 0) = X
+            ObjectPoints(i, 2) = Z
+        Elseif Dir$ = "YPLUS" Then
+            X = (ObjectPoints(i, 0) * Cos(Rad(-Incre))) - (ObjectPoints(i, 2) * Sin(Rad(-Incre)))
+            Z = (ObjectPoints(i, 0) * Sin(Rad(-Incre))) + (ObjectPoints(i, 2) * Cos(Rad(-Incre)))
+            ObjectPoints(i, 0) = X
+            ObjectPoints(i, 2) = Z
+        Endif
+    Next
+End Sub
+
+Sub Normalise(ObjectPoints())
+    Highest = 0
+    For i = 0 To Bound(ObjectPoints()) - 1
+        For j = 0 To 2
+            If Abs(ObjectPoints(i,j)) > Highest Then
+                Highest = ObjectPoints(i,j)
+            Endif
+        Next
+    Next
+    For i = 0 To Bound(ObjectPoints()) - 1
+        For j = 0 To 2
+            ObjectPoints(i,j) = ObjectPoints(i,j) / Highest
+        Next
+    Next
+End Sub
+
+Sub Positivise(ObjectPoints())
+    Lowest = 0
+    For j = 0 To 2
+        For i = 0 To Bound(ObjectPoints()) - 1
+            If ObjectPoints(i,j) < Lowest Then
+                Lowest = ObjectPoints(i,j)
+            Endif
+        Next
+        For i = 0 To Bound(ObjectPoints()) - 1
+            ObjectPoints(i,j) = ObjectPoints(i,j) - Lowest
+        Next
+    Next
+End Sub
+
+Function Fov(Coord1,Coord2)
+    Distance = 240
+    Angle = Atn(Coord1 / (Distance + Coord2))
+    Fov = (Tan(Angle) * Distance)
+End Function
+
+Sub DrawPointsNoMem(Filename$)
+    Open Filename$ For Input As #4
+    Do
+        Line Input #4,Inline$
+        If Word$(Inline$,1) = "v" Then
+            x = Val(Word$(Inline$,2))
+            y = Val(Word$(Inline$,3))
+            z = Val(Word$(Inline$,4))
+            Pixel (MM.Hres/2)+FOV(x,z),(MM.VRes/2)-FOV(y,z)
+        EndIf
+    Loop Until EOF(#4) = 1
+    Close #4
+End Sub
+
+Sub DrawObject(ObjectPoints(),ObjectLines(),Magx,Xoffset,Yoffset,Zoffset)
+    Local Current(6)
+    Centre.X = Mm.Hres/2
+    Centre.Y = Mm.Vres/2
+    If Magx = 0 Then
+        Magx = 150
+    Endif
+    For i = 0 To (Bound(ObjectLines())) - 1
+        For j = 0 To 2
+            Current(j) = ObjectPoints(ObjectLines(i,0)-1,j) * Magx
+            Current(j+3) = ObjectPoints(ObjectLines(i,1)-1,j) * Magx
+        Next
+        X1 = Centre.X+Fov(Current(0)+Xoffset,-Current(2)+Zoffset)
+        Y1 = Centre.Y-Fov(Current(1)+Yoffset,-Current(2)+Zoffset)
+        X2 = Centre.X+Fov(Current(3)+Xoffset,-Current(5)+Zoffset)
+        Y2 = Centre.Y-Fov(Current(4)+Yoffset,-Current(5)+Zoffset)
+        Line X1,Y1,X2,Y2
+        If ObjectLines(i,2) > 0 Then
+            For j = 0 To 2
+                Current(j) = ObjectPoints(ObjectLines(i,1)-1,j) * Magx
+                Current(j+3) = ObjectPoints(ObjectLines(i,2)-1,j) * Magx
+            Next
+            X1 = Centre.X+Fov(Current(0)+Xoffset,-Current(2)+Zoffset)
+            Y1 = Centre.Y-Fov(Current(1)+Yoffset,-Current(2)+Zoffset)
+            X2 = Centre.X+Fov(Current(3)+Xoffset,-Current(5)+Zoffset)
+            Y2 = Centre.Y-Fov(Current(4)+Yoffset,-Current(5)+Zoffset)
+            Line X1,Y1,X2,Y2
+        Endif
+    Next
+End Sub

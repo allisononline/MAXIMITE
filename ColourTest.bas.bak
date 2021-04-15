@@ -1,0 +1,14 @@
+Centre.X = MM.Hres/2
+Centre.Y = MM.Vres/2
+PixelColour = RGB(255,0,0)
+
+For i = 0 To 2
+    For j = 0 To 254
+        PixelColour = PixelColour + (&H100^i)
+        Pixel (i*255)+j,Centre.Y,PixelColour
+    Next
+    For j = 0 To 254
+        PixelColour = PixelColour - (&H100^(2-i))
+        Pixel (i*255)+j,Centre.Y+4,PixelColour
+    Next
+Next

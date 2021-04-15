@@ -94,4 +94,4 @@ FUNCTION WORD$(INLINE3$)
     IF k > 0 THEN
         WORD$ = MID$(INLINE3$,START,k)
     ENDIF
-END FUNCTION
+END FUNCTION

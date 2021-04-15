@@ -1,0 +1,10 @@
+Sub LoadArray(InputArray())
+    Dim InputArray(3)
+    InputArray(0) = 5
+    InputArray(1) = 10
+End Sub
+
+Dim test()
+LoadArray(test())
+Print test(0)
+
