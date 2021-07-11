@@ -1,0 +1,158 @@
+Sub espLog
+    If espLogConsole = 1 Then
+        LongString Print espBuffer%();
+    EndIf
+    If espLogFile = 1 Then
+        LongString Print #2, espBuffer%();
+    EndIf
+End Sub
+
+Sub espSendReceive(Command$,noCRLF)
+    Print #1, Command$;
+    If Not noCRLF Then
+        Print #1
+    EndIf
+    Pause 200
+    espReceive
+End Sub
+
+Sub espReceive
+    LongString Clear espBuffer%()
+    If Loc(#1) <> 0 Then
+        Prevchrs = 0
+        Chrs = 0
+        Do
+            Pause 200
+            Prevchrs = Chrs
+            Chrs = Loc(#1)
+        Loop While Chrs <> Prevchrs Or Chrs = 0
+        For i = 1 To Chrs
+            LongString Append espBuffer%(),Input$(1,#1)
+        Next
+    EndIf
+    espLog
+End Sub
+
+Function espWaitOKError()
+    Do
+        espReceive
+    Loop Until LInStr(espBuffer%(),"OK") Or LInStr(espBuffer%(),"ERROR")
+    espWaitOKError = (LInstr(espBuffer%(),"OK") > 0)
+End Sub    
+
+Sub espReset
+    espSend("AT+RST")
+    Do
+        espReceive
+    Loop Until LInStr(espBuffer%(),"WIFI DISCONNECT") Or LInstr(espBuffer%(),"WIFI GOT IP")
+End Sub
+
+Sub espInit
+    Dim espBuffer%(1024/8)
+    Open "COM1:115200" As #1
+    Open "espLog.txt" For Output As #2
+    espReset
+    Pause 2000
+    espSend("ATE0")
+    junk = espWaitOKError()
+    espSend("AT+CWMODE=1")
+    junk = espWaitOKError()
+End Sub
+
+Sub espIPAddr
+    espSendReceive("AT+CIFSR")
+End Sub
+
+Sub espSvrStatus
+    espSendReceive("AT+CIPSTATUS")
+End Sub
+
+Sub espJoin(ssid$,pass$)
+    espSend("AT+CWJAP="+Chr$(34)+ssid$+Chr$(34)+","+Chr$(34)+pass$+Chr$(34))
+    junk = espWaitOKError()
+End Sub
+
+Sub espLeave
+    espSendReceive("AT+CWQAP")
+End Sub
+
+Function espMultiMode()
+    espSendReceive("AT+CIPMUX?")
+    espMultiMode = (LInstr(espBuffer%(),"+CIPMUX:1") > 0)
+End Function
+
+Sub espOpenServer(portNum)
+    espSendReceive("AT+CIPMUX=1")
+    espSendReceive("AT+CIPSERVER=1,"+Format$(portNum))
+End Sub
+
+Sub CloseServer(portNum)
+    espSendReceive("AT+CIPSERVER=0,"+Format$(portNum))
+    espReset
+End Sub    
+
+Sub espStartConn(connID,connType$,connAddr,connPort)
+    stringAddr$ = Format$((connAddr >> 24) And &HFF)+"."+Format$((connAddr >> 16) And &HFF)+"."
+    Cat stringAddr$, Format$((connAddr >> 8) And &HFF)+"."+Format$((connAddr And &HFF)
+    If espMultiMode() Then
+        stringID$ = Format$(connID)+","
+    Else
+        stringID$ = ""
+    EndIf
+    espSendReceive("AT+CIPSTART="+stringID$+connType$+","+stringAddr$+","+Format$(connPort))
+    junk = espWaitOKError()
+End Sub
+
+Sub espIPSendData(dataArray%(),connID)
+    connLen = LLen(dataArray%())
+    If espMultiMode() Then
+        stringID$ = Format$(connID)+","
+    Else
+        stringID$ = ""
+    EndIf
+    For i = 0 To connLen-1
+        If i > 0 Then
+            espReceive
+        EndIf
+        If (i Mod 2048) = 0 Then
+            If (connLen-i) => 2048 Then
+                currentLen = 2048
+            Else
+                currentLen = (i Mod 2048) + 1
+            EndIf
+            espSendReceive("AT+CIPSEND="+stringID$+Format$(currentLen))
+        EndIf
+        espSendReceive(LGetStr$(dataArray%(),i+1,1),1)
+    Next
+    espReceive
+End Sub
+
+Sub espIPSendFile(filename$,connID)
+    Open filename$ For Input As #5
+    connLen = Lof(#5)
+    If espMultiMode() Then
+        stringID$ = Format$(connID)+","
+    Else
+        stringID$ = ""
+    EndIf
+    For i = 0 To connLen-1
+        If i > 0 Then
+            espReceive
+        EndIf
+        If (i Mod 2048) = 0 Then
+            If (connLen-i) => 2048 Then
+                currentLen = 2048
+            Else
+                currentLen = (i Mod 2048) + 1
+            EndIf
+            espSendReceive("AT+CIPSEND="+stringID$+Format$(currentLen))
+        EndIf
+        espSendReceive(Input$(1,#5),1)
+    Next
+    Close #5
+    espReceive
+End Sub
+
+Sub espClose
+    Close #1
+End Sub

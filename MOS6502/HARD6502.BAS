@@ -1,128 +1,91 @@
-Sub Initialise
-    Accumulator = 0
-    RegisterX = 0
-    RegisterY = 0
-    ProgramCounterLow = 0
-    ProgramCounterHigh = 0
-    StackPointer = 0
-    StatusRegister = 0
-    AddressBusLow = 0
-    AddressBusHigh = 0
-    AdderHoldRegister = 0
-    DataBus = 0
-    InstructionRegister = 0
-    Clock = 0
-    ResetPin = 0
-    ReadWritePin = 0
-    ReadyPin = 0
-    IRQPin = 0
-    NMIPin = 0
-    SyncPin  = 0
+#DEFINE "MEM_EN", "3"
+#DEFINE "CPU_RST", "5"
+#DEFINE "CPU_A0", "7"
+#DEFINE "CPU_A1", "8"
+#DEFINE "CPU_A2", "10"
+#DEFINE "CPU_A3", "11"
+#DEFINE "CPU_A4", "12"
+#DEFINE "CPU_A5", "13"
+#DEFINE "CPU_A6", "15"
+#DEFINE "CPU_A7", "16"
+#DEFINE "CPU_A8", "18"
+#DEFINE "CPU_A9", "19"
+#DEFINE "CPU_AA", "21"
+#DEFINE "CPU_AB", "22"
+#DEFINE "CPU_AC", "23"
+#DEFINE "CPU_AD", "24"
+#DEFINE "CPU_AE", "26"
+#DEFINE "CPU_AF", "27"
+#DEFINE "CPU_D0", "28"
+#DEFINE "CPU_D1", "29"
+#DEFINE "CPU_D2", "31"
+#DEFINE "CPU_D3", "32"
+#DEFINE "CPU_D4", "33"
+#DEFINE "CPU_D5", "35"
+#DEFINE "CPU_D6", "36"
+#DEFINE "CPU_D7", "37"
+#DEFINE "CPU_CL2", "38"
+#DEFINE "CPU_CLK", "40"
+#DEFINE "PORT_A","CPU_A0, 2, CPU_A2, 4, CPU_A6, 2, CPU_A8, 2, CPU_AA, 4, CPU_AE, 2"
+#DEFINE "PORT_D","CPU_D0,2,CPU_D2,3,CPU_D5,3"
 
-    StackAddress = &H0100
-    NonMaskInterrupt = &HFFFA
-    PowerOnReset = &HFFFC
-    BreakRequest = &HFFFE
+Sub memInit
+    SetPin CPU_RST, DOUT: Pin(CPU_RST) = 1
+    SetPin CPU_CLK, DOUT: Pin(CPU_CLK) = 0
+    SetPin CPU_CL2, INTH, memoSim
+    SetPin MEM_EN, DIN
+    SetPin CPU_A0,DIN
+    SetPin CPU_A1,DIN
+    SetPin CPU_A2,DIN
+    SetPin CPU_A3,DIN
+    SetPin CPU_A4,DIN
+    SetPin CPU_A5,DIN
+    SetPin CPU_A6,DIN
+    SetPin CPU_A7,DIN
+    SetPin CPU_A8,DIN
+    SetPin CPU_A9,DIN
+    SetPin CPU_AA,DIN
+    SetPin CPU_AB,DIN
+    SetPin CPU_AC,DIN
+    SetPin CPU_AD,DIN
+    SetPin CPU_AE,DIN
+    SetPin CPU_AF,DIN
+    SetPin CPU_D0,DOUT
+    SetPin CPU_D1,DOUT
+    SetPin CPU_D2,DOUT
+    SetPin CPU_D3,DOUT
+    SetPin CPU_D4,DOUT
+    SetPin CPU_D5,DOUT
+    SetPin CPU_D6,DOUT
+    SetPin CPU_D7,DOUT
+    Open "counter.asm" For Random As #3
+End Sub
 
-    Instruction$ = "   "
-    Address$ = "   "
+Sub memoSim
+    If Pin(MEM_EN) = 0 Then
+        addr = Port(PORT_A) And &H1FFF
+        Seek #3, addr - 1
+        Port(PORT_D) = Input$(1, #3)
+    Else
+        Port(PORT_D) = 0
+    EndIf
+End Sub
 
-    Cls
-    Open "M6502MEM.BIN" For Random As #3
-    Seek #3,1
-    For i = 0 To &HFFFF
-        Print #3,Chr$(00);
+Sub cpuReset
+    Pin(CPU_RST) = 0
+    For i = 0 To 7
+        cpuPulse
+        Pause 2
     Next
 End Sub
 
-Sub PowerReset
-    Accumulator = 0
-    RegisterX = 0
-    RegisterY = 0
-    StackPointer = &HFD
-    WriteStatus("Constant",1)
+Sub cpuPulse
+    Pin(CPU_CLK) = Not Pin(CPU_CLK)
 End Sub
 
-Sub PhaseOne
-End Sub
-
-Sub PhaseTwo
-End Sub
-
-Function ReadStatus(Flag$)
-    If Flag$ = "Negative" Then
-        Bit = 7
-    ElseIf Flag$ = "Overflow" Then
-        Bit = 6
-    ElseIf Flag$ = "Break" Then
-        Bit = 4
-    ElseIf Flag$ = "Decimal" Then
-        Bit = 3
-    ElseIf Flag$ = "Interrupt" Then
-        Bit = 2
-    ElseIf Flag$ = "Zero" Then
-        Bit = 1
-    ElseIf Flag$ = "Carry" Then
-        Bit = 0
-    EndIf
-    Mask = 2^Bit
-    If (StatusRegister And Mask) = 0 Then
-        ReadStatus = 0
-    Else
-        ReadStatus = 1
-    EndIf
-End Function
-
-Sub WriteStatus(Flag$,Status)
-    If Flag$ = "Negative" Then
-        Bit = 7
-    ElseIf Flag$ = "Overflow" Then
-        Bit = 6
-    ElseIf Flag$ = "Constant" Then
-        Bit = 5
-    ElseIf Flag$ = "Break" Then
-        Bit = 4
-    ElseIf Flag$ = "Decimal" Then
-        Bit = 3
-    ElseIf Flag$ = "Interrupt" Then
-        Bit = 2
-    ElseIf Flag$ = "Zero" Then
-        Bit = 1
-    ElseIf Flag$ = "Carry" Then
-        Bit = 0
-    EndIf
-    Mask = 2^Bit
-    If Status = 0 Then
-        StatusRegister = StatusRegister AND (255-Mask)
-    Else
-        StatusRegister = StatusRegister OR Mask
-    EndIf
-End Sub
-
-Function AddressBus()
-    AddressBus = (AddressBusHigh*&H100)+AddressBusLow
-End Function
-
-Function ProgramCounter
-    ProgramCounter = (ProgramCounterHigh*&H100)+ProgramCounterLow
-End Function
-
-Function ReadMemory(Address)
-    Seek #3, Address + 1
-    ReadMemory = Asc(Input$(1,#3))
-End Function
-
-Sub WriteMemory(Address,Byte)
-    Seek #3, Address + 1
-    Print #3, Chr$(Byte);
-End Sub
-
-Sub PushStack(Value)
-    StackPointer = StackPointer - 1
-    WriteMemory(StackAddress+StackPointer,Value)
-End Sub
-
-Function PullStack()
-    StackPointer = StackPointer + 1
-    PullStack = ReadMemory(StackAddress+StackPointer)
-End Function
+memInit
+cpuReset
+Do
+    cpuPulse
+    Pause 200
+Loop

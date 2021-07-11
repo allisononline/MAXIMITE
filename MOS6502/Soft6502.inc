@@ -1,11 +1,4 @@
-Sub DebugMsg(Msg$)
-    Debug = 0
-    If Debug = 1 Then
-        Print Msg$
-    EndIf
-End Sub
-
-Sub Initialise
+Sub M6502Initialise
     Accumulator = 0
     RegisterX = 0
     RegisterY = 0
@@ -27,11 +20,13 @@ Sub Initialise
     Address$ = "   "
 
     Cls
-    Open "M6502MEM.BIN" For Random As #3
-    Seek #3,1
-    For i = 0 To &HFFFF
-        Print #3,Chr$(00);
-    Next
+    Dim M6502Mem%(&H10000/8)
+    Const MemArrayAddr% = Peek(VarAddr M6502Mem%())
+'    Open "M6502MEM.BIN" For Random As #3
+'    Seek #3,1
+'    For i = 0 To &HFFFF
+'        Print #3,Chr$(00);
+'    Next
 End Sub
 
 Sub PowerReset
@@ -65,10 +60,13 @@ End Sub
 
 Sub LoadProgram(Filename$,offset)
     Open Filename$ For Random As #4
-    Seek #3,offset+1
+'    Seek #3,offset+1
     Seek #4,1
+    Local t = 0
     Do While Eof(#4) = 0
-        Print #3,Input$(1,#4);
+'        Print #3,Input$(1,#4);
+        WriteMemory(offset+t,Asc(Input$(1,#4)))
+        inc t
     Loop
     Close #4
 End Sub
@@ -79,9 +77,7 @@ Sub Cycle
     Decode
     GetAddress
     GetNumber
-    M6530Load
-    Execute
-    M6530Store
+    ExecuteInstruction
 End Sub
 
 Sub Fetch
@@ -331,7 +327,7 @@ Sub GetNumber
     EndIf
 End Sub
 
-Sub Execute
+Sub ExecuteInstruction
     Result = CPUData
     If Instruction$ = "ADC" Then
         Result = Accumulator + CPUData + ReadStatus("Carry")
@@ -650,11 +646,10 @@ Function NoCarry(Value3)
     NoCarry = Value3 And &HFF
 End Function
 
-Function ReadAddress(Address)
-    Local LoByte = ReadMemory(Address)
-    Local HiByte = ReadMemory(PageWrapAdd(Address,1))
+Function ReadAddress(MemAddress)
+    Local LoByte = ReadMemory(MemAddress)
+    Local HiByte = ReadMemory(PageWrapAdd(MemAddress,1))
     ReadAddress = (HiByte*&H100)+LoByte
-    DebugMsg(Hex$(ReadAddress))
 End Function
 
 Function PageWrapAdd(Value,incr)
@@ -713,14 +708,16 @@ Sub WriteStatus(Flag$,status)
     EndIf
 End Sub
 
-Function ReadMemory(Address)
-    Seek #3, Address + 1
-    ReadMemory = Asc(Input$(1,#3))
+Function ReadMemory(MemAddress)
+'    Seek #3, MemAddress + 1
+'    ReadMemory = Asc(Input$(1,#3))
+    ReadMemory = Peek(Byte Peek(VarAddr M6502Mem%())+MemAddress)
 End Function
 
-Sub WriteMemory(Address,Value)
-    Seek #3, Address + 1
-    Print #3, Chr$(NoCarry(Value));
+Sub WriteMemory(MemAddress,Value)
+'    Seek #3, MemAddress + 1
+'    Print #3, Chr$(NoCarry(Value));
+    Poke Byte Peek(VarAddr M6502Mem%())+MemAddress,Value
 End Sub
 
 Sub StatusDisplay
@@ -784,3 +781,4 @@ Function Padding$(InString$,Numbers)
         Padding$ = InString$
     EndIf
 End Function
+

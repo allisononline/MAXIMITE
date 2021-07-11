@@ -13,14 +13,14 @@ Sub Readfile
     Print "LOADING POINTS & LINES"
     Do While Eof(#3) = 0
         Line Input #3,Inline$
-        If Word$(Inline$,1) = "v" Then
+        If FindWord$(Inline$,1) = "v" Then
             For V = 0 To 2
                 Points(Pointcnt,V) = Val(Word$(Inline$,V+2))
             Next
             Pointcnt = Pointcnt + 1
-        Elseif Word$(Inline$,1) = "f" Or Word$(Inline$,1) = "l" Then
+        Elseif FindWord$(Inline$,1) = "f" Or FindWord$(Inline$,1) = "l" Then
             For F = 0 To 2
-                Lines(Linecnt,F) = Val(Word$(Inline$,F+2))
+                Lines(Linecnt,F) = Val(FindWord$(Inline$,F+2))
             Next           
             Linecnt = Linecnt + 1
         Endif
@@ -249,6 +249,7 @@ Sub Drawline(Magx,Xoffset,Yoffset,Zoffset)
     If Magx = 0 Then
         Magx = 150
     Endif
+    Page Write 1
     For I = 0 To Lines - 1
         For J = 0 To 2
             Current(J) = Points(Lines(I,0)-1,J) * Magx
@@ -271,6 +272,8 @@ Sub Drawline(Magx,Xoffset,Yoffset,Zoffset)
             Line(X1,Y1)-(X2,Y2)
         Endif
     Next
+    Page Copy 1 To 0
+    Page Write Framebuffer
 End Sub
 
 Sub Keypress
@@ -328,4 +331,4 @@ Sub Demo
 End Sub
 
 
-                                                                          
+

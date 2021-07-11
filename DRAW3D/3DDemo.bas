@@ -1,4 +1,5 @@
 #Include "New3D.inc"
+#Include "A:/General.inc"
 
 Sub Keys
     Keypress$ = Inkey$
@@ -6,27 +7,27 @@ Sub Keys
         If Keypress$ = "q" Then
             Rotate(PointArray(),"ZMINUS")
             Cls
-            DrawObject(PointArray(),LineArray())
+            DrawObject(PointArray(),LineArray(),0,0,-150)
         Elseif Keypress$ = "e" Then
             Rotate(PointArray(),"ZPLUS")
             Cls
-            DrawObject(PointArray(),LineArray())
+            DrawObject(PointArray(),LineArray(),0,0,-150)
         Elseif Keypress$ = "w" Then
             Rotate(PointArray(),"XMINUS")
             Cls
-            DrawObject(PointArray(),LineArray())
+            DrawObject(PointArray(),LineArray(),0,0,-150)
         Elseif Keypress$ = "s" Then
             Rotate(PointArray(),"XPLUS")
             Cls
-            DrawObject(PointArray(),LineArray())
+            DrawObject(PointArray(),LineArray(),0,0,-150)
         Elseif Keypress$ = "a" Then
             Rotate(PointArray(),"YMINUS")
             Cls
-            DrawObject(PointArray(),LineArray())
+            DrawObject(PointArray(),LineArray(),0,0,-150)
         Elseif Keypress$ = "d" Then
             Rotate(PointArray(),"YPLUS")
             Cls
-            DrawObject(PointArray(),LineArray())
+            DrawObject(PointArray(),LineArray(),0,0,-150)
         Endif
     Endif
 End Sub
@@ -37,6 +38,6 @@ Sub Demo
     Loop
 End Sub
 
-Readfile("COW.OBJ")
-DrawObject(PointArray(),LineArray())
+Readfile("gaystation.obj")
+DrawObject(PointArray(),LineArray(),0,0,0)
 Demo

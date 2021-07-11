@@ -1,18 +1,10 @@
-Sub Plus Number
-    Number = Number + 1
-End Sub
-
-Sub Minus Number
-    Number = Number - 1
-End Sub
-
-Function Word$(Inline3$,Wordnum)
+Function FindWord$(Inline3$,Wordnum)
     If Wordnum < 1 Then
         Wordnum = 1
     Endif
+    FindWord$ = ""
+    Local Start = 1
     Local K = 0
-    Word$ = ""
-    Start = 1
     For I = 1 To Wordnum
         Start = Start + K
         K = 0
@@ -26,7 +18,7 @@ Function Word$(Inline3$,Wordnum)
         Loop
     Next
     If K > 0 Then
-        Word$ = Mid$(Inline3$,Start,K)
+        FindWord$ = Mid$(Inline3$,Start,K)
     Endif
 End Function
 
@@ -46,4 +38,4 @@ CSub RMBeep
         0301EA4B 0402EA4C 3400E9C0 E9D3687B 2C003400 2B01BF08 4B0BD10D BC00E9D3 
         F44F4809 F04F6100 EA4B0200 EA4C0301 E9C00402 BF003400 46BD370C 0890E8BD 
         BF004770 58020C00 58020C18 
-End CSub
+End CSub

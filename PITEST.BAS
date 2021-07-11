@@ -1,7 +1,18 @@
-MAXLIMIT = 100001
-PIAPPROX = 0
-FOR k = 0 TO MAXLIMIT
-   PIAPPROX = PIAPPROX + ((-100)^k)/((2*k)+1)
-   PRINT @(0,0) PIAPPROX*4
-NEXT
-PRINT "DONE"
+#DEFINE "DIGITS", "1000"
+
+last = 0
+curr = 0
+k = 0
+i = 0
+    Do
+        fraction = ((-1)^k) / ((2 * k) + 1) * 4 * (DIGITS^(i + 1))
+        last = curr
+        Inc curr, fraction
+        If Fix(curr) = Fix(last) Then
+            curr = (curr - Fix(curr)) * DIGITS * 1
+            Inc i
+        EndIf
+        Inc k
+        Print @(MM.Info(FontWidth) * ((i * 4) + 1), MM.Info(FontHeight)) Format$(Fix(curr))
+    Loop
+Print Chr$(&H07)+"Done."

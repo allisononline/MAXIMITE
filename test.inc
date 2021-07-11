@@ -1,3 +1,1 @@
-Sub test
-    Print "It worked"
-End Sub
+#Include "DRAW3D/New3D.inc"

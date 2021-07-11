@@ -1,0 +1,4 @@
+#include "SHA256.inc"
+
+SHATest
+

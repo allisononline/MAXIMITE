@@ -1,7 +1,7 @@
 #Include "Soft6502.inc"
 
 Sub LoadKIM
-    Initialise
+    M6502Initialise
     M6530Init
     SevenSegInit
     WriteMemory(PowerResetRequest,&H22)
@@ -11,14 +11,22 @@ Sub LoadKIM
     WriteMemory(BreakRequest,&H00)
     WriteMemory(BreakRequest+1,&H1C)
     PowerReset
+'    Kill "6502OUT.TXT"
     Do
-        'WriteMemory(PeripheralAAddr,1)
-        Cycle
-        TeleType
+        If BCDDecoder() = 3 Then
+            WriteMemory(PeripheralAAddr,ReadMemory(PeripheralAAddr) Or 1)
+        EndIf
+        If BCDDecoder() = 1 Then
+            WriteMemory(PeripheralAAddr,ReadMemory(PeripheralAAddr) Or 2)
+        EndIf
+        Fetch
+        Decode
+        GetAddress
+        GetNumber
+        ExecuteInstruction
         StatusDisplay
-        FileOutput
+'        FileOutput
         SevenSegOutput
-        'Delay
     Loop
 End Sub
 
@@ -27,28 +35,32 @@ Sub M6530Init
     M65303Addr = &H1800
     PeripheralAAddr = &H1740
     PeripheralBAddr = &H1742
-    PeripheralA = 0
-    PeripheralB = 0
+    PeripheralAData = 0
+    PeripheralBData = 0
     LoadProgram("KIMROM2.BIN",M65302Addr)
     LoadProgram("KIMROM3.BIN",M65303Addr)
 End Sub
 
-Sub M6530Store
-    If Instruction$ = "STA" Or Instruction$ = "STX" Or Instruction$ = "STY" Then
-        If CPUMemoryAddress = PeripheralAAddr Then
-            PeripheralA = ReadMemory(PeripheralAAddr)
-        ElseIf CPUMemoryAddress = PeripheralBAddr Then
-            PeripheralB = ReadMemory(PeripheralBAddr)
+Sub M6530Load
+    If CPUMemoryAddress = PeripheralAAddr OR CPUMemoryAddress = PeripheralBAddr Then
+        If Instruction$ = "LDA" Or Instruction$ = "LDX" Or Instruction$ = "LDY" Then
+            If CPUMemoryAddress = PeripheralAAddr Then
+                WriteMemory(CPUMemoryAddress,PeripheralAData)
+            ElseIf CPUMemoryAddress = PeripheralBAddr Then
+                WriteMemory(CPUAddressMemory,PeripheralBData)
+            EndIf
         EndIf
     EndIf
 End Sub
 
-Sub M6530Load
-    If Instruction$ = "LDA" Or Instruction$ = "LDX" Or Instruction$ = "LDY" Then
-        If CPUMemoryAddress = PeripheralAAddr Then
-            WriteMemory(PeripheralAAddr,PeripheralA)
-        ElseIf CPUMemoryAddress = PeripheralBAddr Then
-            WriteMemory(PeripheralBAddr,PeripheralB)
+Sub M6530Store
+    If CPUMemoryAddress = PeripheralAAddr OR CPUMemoryAddress = PeripheralBAddr Then
+        If Instruction$ = "STA" Or Instruction$ = "STX" Or Instruction$ = "STY" Then
+            If CPUMemoryAddress = PeripheralAAddr Then
+                PeripheralAData = ReadMemory(CPUMemoryAddress)
+            ElseIf CPUMemoryAddress = PeripheralBAddr Then
+                PeripheralBData = ReadMemory(CPUMemoryAddress)
+            EndIf
         EndIf
     EndIf
 End Sub
@@ -75,18 +87,24 @@ Sub SevenSegInit
 End Sub
 
 Sub SevenSegOutput
-    SegDisplay = Fix((ReadMemory(PeripheralBAddr) AND &H1E)/2)
-    If SegDisplay => 4 AND SegDisplay =< 9 Then
+    If BCDDecoder() => 4 AND BCDDecoder() =< 9 Then
         SegCode = ReadMemory(PeripheralAAddr) AND &H7F
         For i = 0 To &HF
             If SegCode = CharCode(i) Then
-                SegOutput(SegDisplay-4) = i
+                SegOutput(BCDDecoder()-4) = i
             EndIf
         Next
         For i = 0 To 5
-            Print Hex$(SegOutput(i));
+            Print Chr$(&H1B)+"[10;"+Str$(i+1)+"H";
+            If i+4 = BCDDecoder() Then
+                Print Hex$(SegOutput(i));
+            Else
+                Print " ";
+            EndIf
         Next
-        Print ""
+    Else
+        Print Chr$(&H1B)+"[10;1H";
+        Print "      ";
     EndIf
 End Sub
 
@@ -100,7 +118,13 @@ Sub TeleType
 End Sub
 
 Sub KeyPress
-    If (PeripheralB AND &H1E)/2 = 1 Then
-        PeripheralA = PeripheralA OR 1
+    If (ReadMemory(PeripheralBAddr) >> 1) And &HF = 0 Then
+        WriteMemory(PeripheralAAddr,Readmemory(PeripheralAAddr) OR 32)
     EndIf
 End Sub
+
+Function BCDDecoder()
+    BCDDecoder = (ReadMemory(PeripheralBAddr) >> 1) And &HF
+End Function
+
+LoadKIM

@@ -1,4 +1,4 @@
-#Include "A:/DRAW3D/New3D.inc"
+Library Load "DRAW3D.LIB"
 PARTICLES = 50
 
 Sub INITIALISE

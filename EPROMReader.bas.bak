@@ -1,0 +1,88 @@
+#DEFINE "EP_CE","22"
+#DEFINE "EP_OE","24"
+#DEFINE "EP_PR","26"
+#DEFINE "EP_D0","3"
+#DEFINE "EP_D1","5"
+#DEFINE "EP_D2","7"
+#DEFINE "EP_D3","11"
+#DEFINE "EP_D4","13"
+#DEFINE "EP_D5","15"
+#DEFINE "EP_D6","19"
+#DEFINE "EP_D7","21"
+#DEFINE "EP_PORT","EP_D7,1,EP_D6,1,EP_D5,1,EP_D4,1,EP_D3,1,EP_D2,1,EP_D1,1,EP_D0,1"
+#DEFINE "SH_CLR","8"
+#DEFINE "SH_CLK","10"
+#DEFINE "SH_LAT","12"
+#DEFINE "SH_OE","16"
+#DEFINE "SH_SER","18"
+
+#INCLUDE "_74hc595.inc"
+
+Sub EEPInit
+    SetPin EP_CE,DOUT: Pin(EP_CE) = 0
+    SetPin EP_OE,DOUT: Pin(EP_OE) = 1
+    SetPin EP_PR,DOUT: Pin(EP_PR) = 1
+    SetRead
+    Dim EEPShift(5)
+    _74hc595Init(SH_CLR,SH_CLK,SH_LAT,SH_OE,SH_SER,EEPShift())
+End Sub
+
+Sub SetRead
+    SetPin EP_D0,DIN
+    SetPin EP_D1,DIN
+    SetPin EP_D2,DIN
+    SetPin EP_D3,DIN
+    SetPin EP_D4,DIN
+    SetPin EP_D5,DIN
+    SetPin EP_D6,DIN
+    SetPin EP_D7,DIN
+End Sub
+
+Sub SetWrite
+    SetPin EP_D0,DOUT
+    SetPin EP_D1,DOUT
+    SetPin EP_D2,DOUT
+    SetPin EP_D3,DOUT
+    SetPin EP_D4,DOUT
+    SetPin EP_D5,DOUT
+    SetPin EP_D6,DOUT
+    SetPin EP_D7,DOUT
+    Port(EP_PORT) = 0
+End Sub
+
+Function EEPRead(addr)
+    SetRead
+    _74hc595Output(EEPShift(),addr,16)
+    Pin(EP_OE) = 0
+    Pause 2
+    EEPRead = Port(EP_PORT)
+    Pin(EP_OE) = 1
+End Function
+
+Sub EEPWrite(addr,byte)
+    SetWrite
+    Pin(EP_OE) = 1
+    _74hc595Output(EEPShift(),addr,16)
+    Port(EP_PORT) = byte
+    Pulse EP_PR,3
+    Pause 3
+End Sub    
+    
+Sub EEPDump
+    For j = 0 To (2^12)-1
+        Print Hex$(EEPRead(j),2)+" ";
+        If j Mod 16 = 15 Then
+            Print
+        EndIf
+    Next
+End Sub
+
+Sub EEPTest
+    For j = 0 To 63
+        EEPWrite(j,&HF7)
+    Next
+End Sub
+
+EEPInit
+EEPTest
+EEPDump

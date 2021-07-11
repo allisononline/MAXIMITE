@@ -1,0 +1,4 @@
+POST http://arduino-tweet.appspot.com/update HTTP/1.0
+Content-Length: 87
+
+token=323932399-Mye5MfOYaOPBhXHCl28SfNUzR6L1J9ocevXGr4qJ&status=The time is 1.61933e+09

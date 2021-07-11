@@ -1,0 +1,5 @@
+Function Fraction(float!)
+    fAddr% = Peek(VarAddr float!)
+    Long% = Peek(Integer fAddr%)
+    Expo% = ((Long% >> 52) And &H3FF)
+    Mant% = (Long% And ((2^52)-1))+(1<<52)

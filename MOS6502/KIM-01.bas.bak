@@ -1,0 +1,130 @@
+#Include "Soft6502.inc"
+
+Sub LoadKIM
+    M6502Initialise
+    M6530Init
+    SevenSegInit
+    WriteMemory(PowerResetRequest,&H22)
+    WriteMemory(PowerResetRequest+1,&H1C)
+    WriteMemory(NonMaskRequest,&H00)
+    WriteMemory(NonMaskRequest+1,&H1C)
+    WriteMemory(BreakRequest,&H00)
+    WriteMemory(BreakRequest+1,&H1C)
+    PowerReset
+'    Kill "6502OUT.TXT"
+    Do
+        If BCDDecoder() = 3 Then
+            WriteMemory(PeripheralAAddr,ReadMemory(PeripheralAAddr) Or 1)
+        EndIf
+        If BCDDecoder() = 1 Then
+            WriteMemory(PeripheralAAddr,ReadMemory(PeripheralAAddr) Or 2)
+        EndIf
+        Fetch
+        Decode
+        GetAddress
+        GetNumber
+        ExecuteInstruction
+'        StatusDisplay
+'        FileOutput
+        SevenSegOutput
+    Loop
+End Sub
+
+Sub M6530Init
+    M65302Addr = &H1C00
+    M65303Addr = &H1800
+    PeripheralAAddr = &H1740
+    PeripheralBAddr = &H1742
+    PeripheralAData = 0
+    PeripheralBData = 0
+    LoadProgram("KIMROM2.BIN",M65302Addr)
+    LoadProgram("KIMROM3.BIN",M65303Addr)
+End Sub
+
+Sub M6530Load
+    If CPUMemoryAddress = PeripheralAAddr OR CPUMemoryAddress = PeripheralBAddr Then
+        If Instruction$ = "LDA" Or Instruction$ = "LDX" Or Instruction$ = "LDY" Then
+            If CPUMemoryAddress = PeripheralAAddr Then
+                WriteMemory(CPUMemoryAddress,PeripheralAData)
+            ElseIf CPUMemoryAddress = PeripheralBAddr Then
+                WriteMemory(CPUAddressMemory,PeripheralBData)
+            EndIf
+        EndIf
+    EndIf
+End Sub
+
+Sub M6530Store
+    If CPUMemoryAddress = PeripheralAAddr OR CPUMemoryAddress = PeripheralBAddr Then
+        If Instruction$ = "STA" Or Instruction$ = "STX" Or Instruction$ = "STY" Then
+            If CPUMemoryAddress = PeripheralAAddr Then
+                PeripheralAData = ReadMemory(CPUMemoryAddress)
+            ElseIf CPUMemoryAddress = PeripheralBAddr Then
+                PeripheralBData = ReadMemory(CPUMemoryAddress)
+            EndIf
+        EndIf
+    EndIf
+End Sub
+
+Sub SevenSegInit
+    Dim CharCode(16)
+    CharCode(&H0) = &H3F
+    CharCode(&H1) = &H06
+    CharCode(&H2) = &H5B
+    CharCode(&H3) = &H4F
+    CharCode(&H4) = &H66
+    CharCode(&H5) = &H6D
+    CharCode(&H6) = &H7D
+    CharCode(&H7) = &H07
+    CharCode(&H8) = &H7F
+    CharCode(&H9) = &H6F
+    CharCode(&HA) = &H77
+    CharCode(&HB) = &H7C
+    CharCode(&HC) = &H39
+    CharCode(&HD) = &H5E
+    CharCode(&HE) = &H79
+    CharCode(&HF) = &H71
+    Dim SegOutput(6)
+End Sub
+
+Sub SevenSegOutput
+    If BCDDecoder() => 4 AND BCDDecoder() =< 9 Then
+        SegCode = ReadMemory(PeripheralAAddr) AND &H7F
+        For i = 0 To &HF
+            If SegCode = CharCode(i) Then
+                SegOutput(BCDDecoder()-4) = i
+            EndIf
+        Next
+        For i = 0 To 5
+            Print Chr$(&H1B)+"[10;"+Str$(i+1)+"H";
+            If i+4 = BCDDecoder() Then
+                Print Hex$(SegOutput(i));
+            Else
+                Print " ";
+            EndIf
+        Next
+    Else
+        Print Chr$(&H1B)+"[10;1H";
+        Print "      ";
+    EndIf
+End Sub
+
+Sub TeleType
+    If InstructionRegister = &H1C52 Then
+        WriteMemory(PeripheralA,&H01)
+    EndIf
+    If InstructionRegister = &H1EA0 Then
+        Print Chr$(ReadMemory(&HFE));
+    EndIf
+End Sub
+
+Sub KeyPress
+    If (ReadMemory(PeripheralBAddr) >> 1) And &HF = 0 Then
+        WriteMemory(PeripheralAAddr,Readmemory(PeripheralAAddr) OR 32)
+    EndIf
+End Sub
+
+Function BCDDecoder()
+    BCDDecoder = (ReadMemory(PeripheralBAddr) >> 1) And &HF
+End Function
+
+LoadKIM

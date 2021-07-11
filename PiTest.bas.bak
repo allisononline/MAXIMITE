@@ -1,0 +1,18 @@
+#DEFINE "DIGITS", "1000"
+
+last = 0
+curr = 0
+k = 0
+i = 0
+    Do
+        fraction = ((-1)^k) / ((2 * k) + 1) * 4 * (DIGITS^(i + 1))
+        last = curr
+        Inc curr, fraction
+        If Fix(curr) = Fix(last) Then
+            curr = (curr - Fix(curr)) * DIGITS * 1
+            Inc i
+        EndIf
+        Inc k, 10^i
+        Print @(MM.Info(FontWidth) * ((i * 4) + 1), MM.Info(FontHeight)) Format$(Fix(curr))
+    Loop
+Print Chr$(&H07)+"Done."

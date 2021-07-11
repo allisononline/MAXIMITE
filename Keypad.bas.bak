@@ -1,0 +1,42 @@
+#DEFINE "COL1", "7"
+#DEFINE "COL2", "8"
+#DEFINE "COL3", "10"
+#DEFINE "COL4", "11"
+#DEFINE "ROW1", "12"
+#DEFINE "ROW2", "13"
+#DEFINE "ROW3", "15"
+#DEFINE "ROW4", "16"
+
+Sub keySetup
+    SetPin COL1, DOUT: Pin(COL1) = 0
+    SetPin COL2, DOUT: Pin(COL2) = 0
+    SetPin COL3, DOUT: Pin(COL3) = 0
+    SetPin COL4, DOUT: Pin(COL4) = 0
+    SetPin ROW1, DIN
+    SetPin ROW2, DIN
+    SetPin ROW3, DIN
+    SetPin ROW4, DIN 
+End Sub
+
+Function keyScan()
+    keyScan = -1
+    Pin(COL1) = 1
+    If Pin(ROW1) Then
+        keyScan = &H01
+    ElseIf Pin(ROW2) Then
+        keyScan = &H04
+    ElseIf Pin(ROW3) Then
+        keyScan = &H07
+    ElseIf pin(ROW4) Then
+        keyScan = &H0E
+    EndIf
+    Pin(COL1) = 0
+End Function
+
+keySetup
+Do
+    If keyScan() => 0 Then
+        Print Hex$(keyScan());
+    EndIf
+Loop
+        

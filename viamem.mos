@@ -1,0 +1,58 @@
+A9		lda #$FF
+FF
+8D		sta $8002
+02
+80
+8D		sta $8003
+03
+80
+A2		ldx #$00
+00
+8A		txa
+4A		lsr A
+4A		lsr A
+4A		lsr A
+4A		lsr A
+29		and #$0F
+0F
+A8		tay
+B9		lda $E029 Y
+29
+E0
+8D		sta $8000
+00
+80
+8A		txa
+29		and #$0F
+0F
+A8		tay
+B9		lda $E029 Y
+29
+E0
+8D		sta $8001
+01
+80
+D0		bne $03
+03
+4C		jmp $E008
+08
+E0
+4C		jmp $E00A
+0A
+E0
+3F
+06
+5B
+4F
+66
+6D
+7D
+07
+7F
+6F
+77
+7C
+39
+5E
+79
+71

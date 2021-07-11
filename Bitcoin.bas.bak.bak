@@ -1,0 +1,5 @@
+Function ReverseByte(Value)
+    ReverseByte = ((Value AND &HF0) >> 4) OR ((Value AND &H0F) << 4)
+    ReverseByte = ((ReverseByte AND &HCC) >> 2) OR ((ReverseByte AND &H33) << 2)
+    ReverseByte = ((ReverseByte AND &HAA) >> 1) OR ((ReverseByte AND &H55) << 1)
+End Function

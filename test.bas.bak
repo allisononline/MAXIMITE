@@ -1,10 +1,9 @@
-Sub LoadArray(InputArray())
-    Dim InputArray(3)
-    InputArray(0) = 5
-    InputArray(1) = 10
-End Sub
-
-Dim test()
-LoadArray(test())
-Print test(0)
-
+i% = 1
+curr! = 1 / i%
+prev! = 0
+Do
+    Print curr!
+    Inc i%
+    prev! = curr!
+    curr! = 1 / i%
+Loop Until curr! = prev!

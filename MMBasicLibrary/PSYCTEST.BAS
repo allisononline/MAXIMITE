@@ -247,9 +247,9 @@ If Ans$ = "Y" Then
   For i = 1 To 210
     Read Question$
 
-    Font #1,,1 ' reverse video
+'    Font #1,,1 ' reverse video
     Print "Question "; Format$(i); " of 210"
-    Font #1
+'    Font #1
 
     If Len(Question$)>76 Then
       j=77
